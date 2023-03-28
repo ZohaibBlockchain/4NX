@@ -82,7 +82,7 @@ process.on('TypeError', function (err) {
 
 
 //-----------fuctions--------
-const updateSpeed = 10000;
+const updateSpeed = 2000;
 async function w3Engine() {
   let c = await ExeTrade();
   console.log(c);

@@ -1,6 +1,6 @@
 {
-  "name": "W3API",
-  "version": "1.0.0",
+  "name": "4NX Execution Engine",
+  "version": "1.16.1",
   "description": "",
   "main": "index.js",
   "scripts": {
