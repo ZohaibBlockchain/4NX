@@ -139,7 +139,10 @@ export async function createOrValidate(address, inf, name) {
       fContractInfo.factoryABI,
       wallet
     );
-    let tx = await contract.deployNewERC20Token(name, inf.tokenSymbol, '6', inf.instrumentType, true);
+
+   let symbol= removeSubstrings(inf.tokenSymbol,substringsToRemove)
+    symbol = truncateString(symbol);
+    let tx = await contract.deployNewERC20Token(name, symbol, '6', inf.instrumentType, true);
     let receipt = await tx.wait();
     return receipt.logs[0].address;
   }
@@ -236,4 +239,20 @@ export async function SignTrade(inf) {
   catch (err) {
     return { status: 'Failed', reason: err };
   }
+}
+
+
+let substringsToRemove = ["_SPOT", "CFD","FX","CRYPTO","CASH"];
+
+function removeSubstrings(str, substrings) {
+  substrings.forEach(substring => {
+    str = str.replace(substring, '');
+  });
+  return str;
+}
+function truncateString(str) {
+  if (str.length > 11) {
+    return str.slice(0, 11) + '...';
+  }
+  return str;
 }
