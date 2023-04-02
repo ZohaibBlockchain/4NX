@@ -199,7 +199,7 @@ export async function getInstrumentAddress(symbol) {
     return receipt.logs[0].address;
   }
   else {
-    return address;
+    return tokenAddress;
   }
 }
 
