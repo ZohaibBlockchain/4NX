@@ -192,7 +192,7 @@ export async function getInstrumentAddress(symbol) {
     smartContractInf.Factory.ABI,
     wallet
   );
-  tokenAddress = await contract.getAddress(symbol+'.X');
+ let tokenAddress = await contract.getAddress(symbol+'.X');
   if (ethers.constants.AddressZero == tokenAddress) {
     let tx = await contract.deployNewERC20Token(symbol+'.X', createSymbol(symbol,'L'), '18');//here createSymbol 2nd prams is extra 
     let receipt = await tx.wait();
