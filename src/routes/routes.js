@@ -39,7 +39,7 @@ router.post("/tokendetails", async (req, res) => {
      address = await  getInstrumentAddress(inf.symbol);
       res.status(200).send({token: address, tokenDecimal: '18', tokenIcon: defaultTokenUri});
     }
-    else {//CFD Instruments
+    else if(_type_ == 'leveraged') {//CFD Instruments
       let userCount = await userExits(inf.walletAddress);
 
       if (userCount > 0) {
@@ -85,6 +85,10 @@ router.post("/tokendetails", async (req, res) => {
           }
         }
       }
+    }
+    else{
+      res.status(400).send('Invalid Format');
+      console.log('Invalid format')
     }
   } catch (error) {
     console.log(error);
