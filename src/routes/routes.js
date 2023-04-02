@@ -36,7 +36,7 @@ router.post("/tokendetails", async (req, res) => {
     let _type_ = inf.symbol.split(".")[0];
     if (_type_ == 'deliverable')//For Cash Instruments...
     {
-     address = await  getInstrumentAddress(inf.symbol);
+      let address = await  getInstrumentAddress(inf.symbol);
       res.status(200).send({token: address, tokenDecimal: '18', tokenIcon: defaultTokenUri});
     }
     else if(_type_ == 'leveraged') {//CFD Instruments
