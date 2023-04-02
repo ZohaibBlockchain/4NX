@@ -1,84 +1,15 @@
 import { parse } from "fixparserjs";
 
+let garbage = ["_SPOT", "CFD", "FX", "CRYPTO", "CASH", "EQ","INDEX","COMMODITY","deliverable", "leveraged"];
 
-const garbage = ['_SPOT', ''];
-const CFDInstruments = ["INDEX", "EQ", "CRYPTO", "FX", "COMMODITY"];
+
 
 export function getNames(dataArr) {
-    let NamesArr = [];
-    for (let i = 0; i < dataArr.length; i++) {
-        NamesArr[i] = parse(dataArr[i], '^');
-        let Data = NamesArr[i].Body;
-        NamesArr[i] = NamesArr[i].Body.Symbol;
-        let v = (detectInstrument(NamesArr[i]));
-        NamesArr[i] = { Name: updateName(Data.Symbol, Data.Side, v.type), Symbol: v.name, type: v.type, fullInfo: Data};
-    }
+        let Data = parse(dataArr[i], '^').Body;
+        let _name = (Data.Side == "BUY")?Data.Name += '.L.X':Data.Name += '.S.X';
+        let _symbol = createSymbol(Data.Symbol,(Data.Side === 'BUY')?"L":"S")
+        NamesArr[i] = { Name: _name, Symbol: _symbol, type: 'leveraged', fullInfo: Data };
     return NamesArr;
-}
-
-
-
-export function detectInstrument(InstrumentSymbol) {
-
-    let Instrument = splitSymbol(InstrumentSymbol);
-    switch (Instrument[0]) {
-        case 'CFD':
-            for (let i = 0; i < CFDInstruments.length; i++) {
-                if (CFDInstruments[i] == Instrument[1]) {
-                    if (Instrument.length == 4) {
-                        let name = Instrument[2] + '.' + Instrument[3];
-                        return { name: name, type: Instrument[0] + '.' + Instrument[1] };
-                    }
-                    else if (Instrument.length == 3) {
-                        let name = Instrument[2];
-                        return { name: name, type: Instrument[0] + '.' + Instrument[1] };
-                    }
-                    else if (Instrument.length == 2) {
-                        let name = Instrument[1];
-                        return { name: name, type: Instrument[0] };
-                    }
-                }
-            }
-
-            if (Instrument.length == 4) {
-                let name = Instrument[2] + '.' + Instrument[3];
-                return { name: name, type: Instrument[0] + '.' + Instrument[1] };
-            }
-            else if (Instrument.length == 3) {
-                let name = Instrument[2];
-                return { name: name, type: Instrument[0] + '.' + Instrument[1] };
-            }
-            else if (Instrument.length == 2) {
-                let name = Instrument[1];
-                return { name: name, type: Instrument[0] };
-            }
-
-            break;
-        case 'EQ':
-            if (Instrument.length == 3) {
-                let name = Instrument[1] + '.' + Instrument[2];
-                return { name: name, type: Instrument[0] };;
-            } else {
-                let name = Instrument[1];
-                return { name: name, type: Instrument[0] };
-            }
-
-            break;
-        case 'CRYPTO':
-            {
-                let name = Instrument[1];
-                return { name: name, type: Instrument[0] };
-            }
-            break;
-        case 'FX':
-            {
-                let name = Instrument[1];
-                return { name: name, type: Instrument[0] };
-            }
-            break;
-        default:
-            break;
-    }
 }
 
 
@@ -94,23 +25,14 @@ function splitSymbol(symbol) {
 
 
 
-function updateName(name, side, type) {
-    garbage.forEach(element => {
-        name = name.replace(element, '');
-    });
-    if (checkLeverageInstruments(type)) {
-        if (side == 'BUY') {
-            name += '.L';
-        } else {
-            name += '.S';
-        }
+function updateName(name, side) {
+    if (side == 'BUY') {
+        name += '.L.X';
     } else {
-        //Do nothing
+        name += '.S.X';
     }
-    return name
+    return name;
 }
-
-
 
 
 function checkLeverageInstruments(type) {
@@ -127,7 +49,6 @@ function checkLeverageInstruments(type) {
 }
 
 
-
 export function checkType(symbol) {
     let arr = splitSymbol(symbol);
     if (arr[0] == 'CFD' || arr[0] == 'FX') {
@@ -137,3 +58,66 @@ export function checkType(symbol) {
     }
 }
 
+
+
+export function createSymbol(symbol, side) {
+    let symbolArr = symbol.split(".");
+    if (symbolArr[0] == 'deliverable') {
+        const newSymbolArray = symbolArr.filter(_str => !garbage.includes(_str));
+        if (countStringLengths(newSymbolArray) <= 8) {
+            symbol = newSymbolArray[0] + "." + newSymbolArray.slice(1).join(""); //Now <=9 digits here string
+            if (symbol.slice(-1) === ".") {
+                return symbol.toUpperCase() + 'X';
+            } else {
+                return symbol.toUpperCase() + '.X';
+            }
+        }
+        else {
+            symbol = newSymbolArray[0] + ".";
+            if (symbol.length <= 9) {
+                if (symbol.slice(-1) === ".") {
+                    return symbol.toUpperCase() + 'X';
+                } else {
+                    return symbol.toUpperCase() + '.X';
+                }
+            }
+            else {
+                symbol = symbol.slice(0, 9);
+                if (symbol.slice(-1) === ".") {
+                    return symbol.toUpperCase() + 'X';
+                } else {
+                    return symbol.toUpperCase() + '.X';
+                }
+            }
+        }
+    }
+    else {
+        const newSymbolArray = symbolArr.filter(_str => !garbage.includes(_str));
+        if (countStringLengths(newSymbolArray) <= 6) {
+            symbol = newSymbolArray[0] + "." + newSymbolArray.slice(1).join("");//Now <=7 digits here string
+            if (symbol.slice(-1) === ".") {
+                return symbol.toUpperCase() + side + '.X';
+            } else {
+                return symbol.toUpperCase() + '.' + side + '.X';
+            }
+        }
+        else {
+            symbol = newSymbolArray[0] + ".";
+            symbol = symbol.slice(0, 7);
+            if (symbol.slice(-1) === ".") {
+                return symbol.toUpperCase() + side + '.X';
+            } else {
+                return symbol.toUpperCase() + '.' + side + '.X';
+            }
+        }
+    }
+}
+
+
+export function countStringLengths(arr) {
+    let totalLength = 0;
+    for (let i = 0; i < arr.length; i++) {
+        totalLength += arr[i].length;
+    }
+    return totalLength;
+}

@@ -10,7 +10,7 @@ import {
 } from "../db/db";
 import express from "express";
 export const router = express.Router();
-import { getNames, checkType, detectInstrument,checkLeverageInstruments} from "../../helperFx";
+import { getNames} from "../../helperFx";
 
 import {
   getInstrument,
@@ -25,18 +25,16 @@ const defaultTokenUri = "https://icons.iconarchive.com/icons/cjdowner/cryptocurr
 
 
 router.get("/", (req, res) => {
-  res.send("Welcome to W3 REST API!!!");
+  res.send("Welcome to 4NX REST API!!!");
 });
 
 
 
 router.post("/tokendetails", async (req, res) => {
-
-  console.log(req.body);
-  //requirement Symbol and walletAddress,Type
   try {
     let inf = req.body;
-    if (!checkType(inf.symbol))//For Cash Instruments...
+    let _type_ = inf.symbol.split(".")[0];
+    if (_type_ == 'deliverable')//For Cash Instruments...
     {
      address = await  getInstrumentAddress(inf.symbol);
       res.status(200).send({token: address, tokenDecimal: '18', tokenIcon: defaultTokenUri});
@@ -46,18 +44,19 @@ router.post("/tokendetails", async (req, res) => {
 
       if (userCount > 0) {
         let userInf = await getUserInstrumentSettings(inf.walletAddress);
-        let instrumentDetails = detectInstrument(inf.symbol);
-        let data = { instrumentName: inf.symbol, tokenSymbol: instrumentDetails.name, instrumentType: instrumentDetails.type };
+        // let instrumentDetails = detectInstrument(inf.symbol);
+       
+        let data = { instrumentName: inf.symbol, tokenSymbol:inf.symbol, instrumentType: _type_};
         let r = await getInstrument(data);
         let update = await updateTokenInfo(userInf.Instruments, inf.symbol, userInf._id);
 
 
         if (update.value == 'Buy') {
-          let tokenDetails = { TokenSymbol: instrumentDetails.name + '.L', TokenAddress: r[0], TokenDecimal: '6', Icon: defaultTokenUri }
+          let tokenDetails = { TokenSymbol: r[0], TokenAddress: r[1], TokenDecimal: '6', Icon: defaultTokenUri }
           res.status(200).send(tokenDetails);
           return;
         } else {
-          let tokenDetails = { TokenSymbol: instrumentDetails.name + '.S', TokenAddress: r[1], TokenDecimal: '6', Icon: defaultTokenUri }
+          let tokenDetails = { TokenSymbol:r[2], TokenAddress: r[3], TokenDecimal: '6', Icon: defaultTokenUri }
           res.status(200).send(tokenDetails);
           return;
         }
@@ -70,18 +69,17 @@ router.post("/tokendetails", async (req, res) => {
           let userInf = await getUserInstrumentSettings(inf.walletAddress);
           let update = await updateTokenInfo(userInf.Instruments, inf.symbol, userInf._id);
 
+          let data = { instrumentName: inf.symbol, tokenSymbol: inf.symbol, instrumentType:_type_};
 
-          let instrumentDetails = detectInstrument(inf.symbol);
-          let data = { instrumentName: inf.symbol, tokenSymbol: instrumentDetails.name, instrumentType: instrumentDetails.type };
           console.log(data);
           let r = await getInstrument(data);
 
           if (update.value == 'Buy') {
-            let tokenDetails = { TokenSymbol: instrumentDetails.name + '.L', TokenAddress: r[0], TokenDecimal: '6', Icon: defaultTokenUri }
+            let tokenDetails = { TokenSymbol: r[0], TokenAddress: r[1], TokenDecimal: '6', Icon: defaultTokenUri }
             res.status(200).send(tokenDetails);
             return;
           } else {
-            let tokenDetails = { TokenSymbol: instrumentDetails.name + '.S', TokenAddress: r[1], TokenDecimal: '6', Icon: defaultTokenUri }
+            let tokenDetails = { TokenSymbol: r[2], TokenAddress: r[3], TokenDecimal: '6', Icon: defaultTokenUri }
             res.status(200).send(tokenDetails);
             return;
           }
@@ -94,6 +92,7 @@ router.post("/tokendetails", async (req, res) => {
   }
   res.status(400).send('unexpected error TD2');
 });
+
 
 
 async function updateTokenInfo(arr, symbol, id) {
@@ -123,9 +122,7 @@ function flipValue(val) {
 router.post("/tradeUpdate", async (req, res) => {
   try {
     console.log(req.body);
-    let InfArray = [];
-    InfArray.push(req.body.Message);
-    let Data = getNames(InfArray)[0];
+    let Data = getNames(req.body.Message);
     let trade = await registerTrade({
       walletAddress: Data.fullInfo.PartyID,
       tokenAmount: Data.fullInfo.OrderQty,

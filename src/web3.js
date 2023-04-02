@@ -4,7 +4,7 @@ const fContractInfo = require("./contractABI/factory.json");
 const tContractInfo = require("./contractABI/token.json");
 const smartContractInf = require("./contractABI/contractInf.json");
 const InfType = require('./Types/type.js');
-
+import {createSymbol} from "../helperFx";
 require('dotenv').config();
 
 const account_from = {
@@ -80,43 +80,41 @@ export async function LeverageTradeManager(inf, tokens) {
   catch (error) {
     console.log(error);
   }
-
-
 }
 
 
 
-function correctInf(inf) {
-
-
-  if (inf[inf.length - 2] === '.') {
-    return inf;
-  } else {
-    return inf + '.L'
-  }
-}
 
 
 
 export async function getInstrument(inf) {
   try {
-    inf.instrumentName = correctInf(inf.instrumentName);
-    inf.tokenSymbol = correctInf(inf.tokenSymbol);
-    let doubleAddresses = [];
+    let name = inf.instrumentName.toUpperCase() + '.L.X';
+
+    let symbol = createSymbol(inf.tokenSymbol, 'L');
+
+    let tokensData = [];
+
     const contract = new ethers.Contract(fContractInfo.factoryAddress, fContractInfo.factoryABI, provider);
-    let address1 = await contract.getAddress(inf.instrumentName);
-    address1 = await createOrValidate(address1, inf, inf.instrumentName);
-    let name2 = inf.instrumentName;
-    let symbol = inf.tokenSymbol;
-    name2 = name2.slice(0, -1) + flipChar(name2.slice(-1));
-    symbol = symbol.slice(0, -1) + flipChar(symbol.slice(-1));
-    console.log(name2, symbol);
+
+    let address1 = await contract.getAddress(name);
+
+    address1 = await createOrValidate(address1, symbol, name);
+    
+    let name2 = inf.instrumentName.toUpperCase() + '.S.X';
+
+    let symbol2 = createSymbol(inf.tokenSymbol, 'S');
+
     let address2 = await contract.getAddress(name2);
-    address2 = await createOrValidate(address2, inf, name2);
+
+    address2 = await createOrValidate(address2, symbol2, name2);
+
     if (address1 != null && address2 != null) {
-      doubleAddresses.push(address1);
-      doubleAddresses.push(address2);
-      return doubleAddresses;
+      tokensData.push(symbol);
+      tokensData.push(address1);
+      tokensData.push(symbol2);
+      tokensData.push(address2);
+      return tokensData;
     } else {
       throw 'Failed to create or fetch the address.';
     }
@@ -129,7 +127,7 @@ export async function getInstrument(inf) {
 
 
 
-export async function createOrValidate(address, inf, name) {
+export async function createOrValidate(address, symbol, name) {
   if (ethers.constants.AddressZero == address) {
 
     const pk = account_from.privateKey.toString();
@@ -140,9 +138,7 @@ export async function createOrValidate(address, inf, name) {
       wallet
     );
 
-   let symbol= removeSubstrings(inf.tokenSymbol,substringsToRemove)
-    symbol = truncateString(symbol);
-    let tx = await contract.deployNewERC20Token(name, symbol, '6', inf.instrumentType, true);
+    let tx = await contract.deployNewERC20Token(name, symbol, '6', 'leveraged', true);
     let receipt = await tx.wait();
     return receipt.logs[0].address;
   }
@@ -176,15 +172,6 @@ function splitSymbol(symbol) {
   return symbol.split(".");
 }
 
-
-function flipChar(char) {
-  if (char == 'L')
-    return 'S';
-  else {
-    return 'L';
-  }
-}
-
 function getside(side) {
   if (side == 'SELL')
     return 0
@@ -205,14 +192,9 @@ export async function getInstrumentAddress(symbol) {
     smartContractInf.Factory.ABI,
     wallet
   );
-  //Create new instrument token and then return address
-  tokenAddress =  await contract.getAddress(symbol);
+  tokenAddress = await contract.getAddress(symbol+'.X');
   if (ethers.constants.AddressZero == tokenAddress) {
-    let nSymbol = symbol;
-    if (nSymbol.length > 12) {
-      nSymbol = nSymbol.slice(0, 12); // take the first 12 characters
-    };
-    let tx = await contract.deployNewERC20Token(symbol, nSymbol, '18');
+    let tx = await contract.deployNewERC20Token(symbol+'.X', createSymbol(symbol,'L'), '18');//here createSymbol 2nd prams is extra 
     let receipt = await tx.wait();
     return receipt.logs[0].address;
   }
@@ -220,6 +202,11 @@ export async function getInstrumentAddress(symbol) {
     return address;
   }
 }
+
+
+
+
+
 
 export async function SignTrade(inf) {
   try {
@@ -242,17 +229,5 @@ export async function SignTrade(inf) {
 }
 
 
-let substringsToRemove = ["_SPOT", "CFD","FX","CRYPTO","CASH"];
 
-function removeSubstrings(str, substrings) {
-  substrings.forEach(substring => {
-    str = str.replace(substring, '');
-  });
-  return str;
-}
-function truncateString(str) {
-  if (str.length > 11) {
-    return str.slice(0, 11) + '...';
-  }
-  return str;
-}
+
