@@ -159,6 +159,7 @@ router.post("/tradeUpdate", async (req, res) => {
     res.status(200).send("CPPI");
   }
   } catch (error) {
+    console.log(error);
     res.status(400).send("Failed to Execute 0x002");
   }
 });
