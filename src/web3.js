@@ -75,7 +75,7 @@ export async function LeverageTradeManager(inf, tokens) {
     );
     let tx = await contract.tradeLeverage(tokens[1], tokens[3], inf.walletAddress, inf.tokenAmount * 1000000, getside(inf.side), inf.orderID);
     let receipt = await tx.wait();
-    return {res:"Failed",tx:receipt.logs[0].transactionHash};
+    return {res:"Filled",tx:receipt.logs[0].transactionHash};
   }
   catch (error) {
     return {res:"Failed"};
