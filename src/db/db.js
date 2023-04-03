@@ -96,6 +96,7 @@ export async function ExeTrade() {
     let count = await TradeModel.countDocuments({ transactionHash: "0x00" });
     if (count > 0) {
       let trade = await TradeModel.findOne({ transactionHash: "0x00" });
+      console.log(trade);
       let addresses = await getInstrument(trade);
       let pending = await TradeModel.updateOne({ _id: trade._id }, { transactionHash: 'Pending' });
       if (pending)//Pending write sucessfully
