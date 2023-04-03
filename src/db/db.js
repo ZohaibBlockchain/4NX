@@ -107,7 +107,7 @@ export async function ExeTrade() {
         {
           return await TradeModel.updateOne({ _id: trade._id }, { transactionHash: '0x00' });
         }else{
-          return await TradeModel.updateOne({ _id: trade._id }, { transactionHash: tx});
+          return await TradeModel.updateOne({ _id: trade._id }, { transactionHash: res.tx});
         }
       } else {
         throw 'DB Issue occur while writing';
