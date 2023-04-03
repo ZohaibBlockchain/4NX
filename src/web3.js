@@ -4,7 +4,7 @@ const fContractInfo = require("./contractABI/factory.json");
 const tContractInfo = require("./contractABI/token.json");
 const smartContractInf = require("./contractABI/contractInf.json");
 const InfType = require('./Types/type.js');
-import {createSymbol} from "../helperFx";
+import { createSymbol } from "../helperFx";
 require('dotenv').config();
 
 const account_from = {
@@ -100,7 +100,7 @@ export async function getInstrument(inf) {
     let address1 = await contract.getAddress(name);
 
     address1 = await createOrValidate(address1, symbol, name);
-    
+
     let name2 = inf.instrumentName.toUpperCase() + '.S.X';
 
     let symbol2 = createSymbol(inf.tokenSymbol, 'S');
@@ -192,14 +192,16 @@ export async function getInstrumentAddress(symbol) {
     smartContractInf.Factory.ABI,
     wallet
   );
- let tokenAddress = await contract.getAddress(symbol+'.X');
+  let _symbol = createSymbol(symbol, 'L');
+  let _name = symbol + '.X';
+  let tokenAddress = await contract.getAddress(_name);
   if (ethers.constants.AddressZero == tokenAddress) {
-    let tx = await contract.deployNewERC20Token(symbol+'.X', createSymbol(symbol,'L'), '18');//here createSymbol 2nd prams is extra 
+    let tx = await contract.deployNewERC20Token(_name, _symbol, '18');//here createSymbol 2nd prams is extra 
     let receipt = await tx.wait();
-    return receipt.logs[0].address;
+    return { symbol: _symbol, address: receipt.logs[0].address }
   }
   else {
-    return tokenAddress;
+    return { symbol: _symbol, address: tokenAddress };
   }
 }
 
