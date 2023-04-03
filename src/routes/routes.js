@@ -129,6 +129,7 @@ router.post("/tradeUpdate", async (req, res) => {
   try {
     console.log(req.body);
     let Data = getNames(req.body.Message);
+    console.log(Data.type);
     if(Data.type == 'leveraged')
     {
     let trade = await registerTrade({
