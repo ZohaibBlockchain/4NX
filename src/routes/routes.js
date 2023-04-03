@@ -130,7 +130,7 @@ router.post("/tradeUpdate", async (req, res) => {
     console.log(req.body);
     let Data = getNames(req.body.Message);
     console.log(Data.type);
-    if(Data.type == 'leveraged')
+    if(Data.type == 'LEVERAGED')
     {
     let trade = await registerTrade({
       walletAddress: Data.fullInfo.PartyID,
