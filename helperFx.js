@@ -10,9 +10,9 @@ export function getNames(dataArr) {
     // console.log(Data,' ----- ',_name);
     // let _symbol = createSymbol(Data.Symbol, (Data.Side === 'BUY') ? "L" : "S");
     if (checkInstrument(Data.Symbol)) {
-        return { Name: 'leveraged.' + Data.Symbol, Symbol: Data.Symbol, type: 'leveraged', fullInfo: Data };
+        return { Name: 'LEVERAGED.' + Data.Symbol, Symbol: Data.Symbol, type: 'LEVERAGED', fullInfo: Data };
     } else {
-        return { Name: 'deliverable' + Data.Symbol, Symbol: Data.Symbol, type: 'deliverable', fullInfo: Data };
+        return { Name: 'DELIVERABLE' + Data.Symbol, Symbol: Data.Symbol, type: 'DELIVERABLE', fullInfo: Data };
     }
 }
 
