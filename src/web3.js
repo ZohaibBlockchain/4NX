@@ -75,10 +75,10 @@ export async function LeverageTradeManager(inf, tokens) {
     );
     let tx = await contract.tradeLeverage(tokens[1], tokens[3], inf.walletAddress, inf.tokenAmount * 1000000, getside(inf.side), inf.orderID);
     let receipt = await tx.wait();
-    return receipt.logs[0].transactionHash;
+    return {res:"Failed",tx:receipt.logs[0].transactionHash};
   }
   catch (error) {
-    console.log('Yahn hai error ',tokens,error);
+    return {res:"Failed"};
   }
 }
 

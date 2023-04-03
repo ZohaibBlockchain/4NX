@@ -11,6 +11,7 @@ import {
   defaultIconModel,
 } from "../../schemas";
 import { ethers } from "ethers";
+import e from "express";
 
 
 
@@ -101,9 +102,13 @@ export async function ExeTrade() {
       let pending = await TradeModel.updateOne({ _id: trade._id }, { transactionHash: 'Pending' });
       if (pending)//Pending write sucessfully
       {
-        let tx = await LeverageTradeManager(trade, addresses);
-        let r = await TradeModel.updateOne({ _id: trade._id }, { transactionHash: tx });
-        return r;
+        let res = await LeverageTradeManager(trade, addresses);
+        if(res.res == 'Failed')
+        {
+          return await TradeModel.updateOne({ _id: trade._id }, { transactionHash: '0x00' });
+        }else{
+          return await TradeModel.updateOne({ _id: trade._id }, { transactionHash: tx});
+        }
       } else {
         throw 'DB Issue occur while writing';
       }
