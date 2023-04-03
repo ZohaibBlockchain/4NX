@@ -7,6 +7,7 @@ let garbage = ["BO", "FU", "_SPOT", "CFD", "FX", "CRYPTO", "CASH", "EQ", "INDEX"
 export function getNames(dataArr) {
     let Data = parse(dataArr, '^').Body;
     let _name = (Data.Side == "BUY") ? Data.Name += '.L.X' : Data.Name += '.S.X';
+    console.log(Data,' ----- ',_name);
     let _symbol = createSymbol(Data.Symbol, (Data.Side === 'BUY') ? "L" : "S");
     if (checkInstrument(Data.Symbol)) {
         return { Name: _name, Symbol: _symbol, type: 'leveraged', fullInfo: Data };
