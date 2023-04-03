@@ -78,7 +78,7 @@ export async function LeverageTradeManager(inf, tokens) {
     return receipt.logs[0].transactionHash;
   }
   catch (error) {
-    console.log(error);
+    console.log('Yahn hai error ',tokens,error);
   }
 }
 
