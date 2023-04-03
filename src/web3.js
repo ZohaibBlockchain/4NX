@@ -42,38 +42,38 @@ export async function nonLeverageTradeManager(inf, tokenAddress) {
   //Nothing Right Now
 }
 
-async function arrangeAddresses(tokenAddresses) {
-  let tokens = [];
-  let token1 = new ethers.Contract(tokenAddresses[0], tContractInfo.tokenABI, provider);
-  let token2 = new ethers.Contract(tokenAddresses[1], tContractInfo.tokenABI, provider);
-  let name1 = await token1.name.call();
-  name1 = name1.slice(-1);
-  let name2 = await token2.name.call();
-  name2 = name2.slice(-1);
-  if (name1 === 'L') {
-    tokens[0] = tokenAddresses[0];
-  } else {
-    tokens[1] = tokenAddresses[0];
-  }
-  if (name2 === 'S') {
-    tokens[1] = tokenAddresses[1];
-  } else {
-    tokens[0] = tokenAddresses[1];
-  }
-  return tokens;
-}
+// async function arrangeAddresses(tokenAddresses) {
+//   let tokens = [];
+//   let token1 = new ethers.Contract(tokenAddresses[0], tContractInfo.tokenABI, provider);
+//   let token2 = new ethers.Contract(tokenAddresses[1], tContractInfo.tokenABI, provider);
+//   let name1 = await token1.name.call();
+//   name1 = name1.slice(-1);
+//   let name2 = await token2.name.call();
+//   name2 = name2.slice(-1);
+//   if (name1 === 'L') {
+//     tokens[0] = tokenAddresses[0];
+//   } else {
+//     tokens[1] = tokenAddresses[0];
+//   }
+//   if (name2 === 'S') {
+//     tokens[1] = tokenAddresses[1];
+//   } else {
+//     tokens[0] = tokenAddresses[1];
+//   }
+//   return tokens;
+// }
 
 export async function LeverageTradeManager(inf, tokens) {
   try {
     const pk = account_from.privateKey.toString();
     let wallet = new ethers.Wallet(pk, provider);
-    let tokenAddresses = await arrangeAddresses(tokens);
+    // let tokenAddresses = await arrangeAddresses(tokens);
     let contract = new ethers.Contract(
       fContractInfo.factoryAddress,
       fContractInfo.factoryABI,
       wallet
     );
-    let tx = await contract.tradeLeverage(tokenAddresses[1], tokenAddresses[3], inf.walletAddress, inf.tokenAmount * 1000000, getside(inf.side), inf.orderID);
+    let tx = await contract.tradeLeverage(tokens[1], tokens[3], inf.walletAddress, inf.tokenAmount * 1000000, getside(inf.side), inf.orderID);
     let receipt = await tx.wait();
     return receipt.logs[0].transactionHash;
   }
