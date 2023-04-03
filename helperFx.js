@@ -1,47 +1,28 @@
 import { parse } from "fixparserjs";
 
-let garbage = ["_SPOT", "CFD", "FX", "CRYPTO", "CASH", "EQ","INDEX","COMMODITY","deliverable", "leveraged"];
+let garbage = ["BO", "FU", "_SPOT", "CFD", "FX", "CRYPTO", "CASH", "EQ", "INDEX", "COMMODITY", "deliverable", "leveraged"];
 
 
 
 export function getNames(dataArr) {
-        let Data = parse(dataArr[i], '^').Body;
-        let _name = (Data.Side == "BUY")?Data.Name += '.L.X':Data.Name += '.S.X';
-        let _symbol = createSymbol(Data.Symbol,(Data.Side === 'BUY')?"L":"S")
-        NamesArr[i] = { Name: _name, Symbol: _symbol, type: 'leveraged', fullInfo: Data };
-    return NamesArr;
-}
-
-
-
-
-
-function splitSymbol(symbol) {
-    return symbol.split(".");
-}
-
-
-
-
-
-
-function updateName(name, side) {
-    if (side == 'BUY') {
-        name += '.L.X';
+    let Data = parse(dataArr[i], '^').Body;
+    let _name = (Data.Side == "BUY") ? Data.Name += '.L.X' : Data.Name += '.S.X';
+    let _symbol = createSymbol(Data.Symbol, (Data.Side === 'BUY') ? "L" : "S");
+    if (checkInstrument(Data.Symbol)) {
+        return { Name: _name, Symbol: _symbol, type: 'leveraged', fullInfo: Data };
     } else {
-        name += '.S.X';
+        return { Name: _name, Symbol: _symbol, type: 'deliverable', fullInfo: Data };
     }
-    return name;
 }
 
 
-function checkLeverageInstruments(type) {
 
-    let _type = splitSymbol(type);
+
+function checkInstrument(symbol) {
+    let _type = symbol.split(".")
     for (let i = 0; i < _type.length; i++) {
 
-        if (_type[i] == 'CFD' || _type[i] == 'FX') {
-
+        if (_type[i] == 'CFD' || _type[i] == 'FX' || _type[i] == 'FU') {
             return true;
         }
     }
@@ -49,14 +30,6 @@ function checkLeverageInstruments(type) {
 }
 
 
-export function checkType(symbol) {
-    let arr = splitSymbol(symbol);
-    if (arr[0] == 'CFD' || arr[0] == 'FX') {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 
 

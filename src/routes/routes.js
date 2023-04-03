@@ -129,6 +129,8 @@ router.post("/tradeUpdate", async (req, res) => {
   try {
     console.log(req.body);
     let Data = getNames(req.body.Message);
+    if(Data.type == 'leveraged')
+    {
     let trade = await registerTrade({
       walletAddress: Data.fullInfo.PartyID,
       tokenAmount: Data.fullInfo.OrderQty,
@@ -147,14 +149,15 @@ router.post("/tradeUpdate", async (req, res) => {
       console.log("Order already exits");
       res.status(200).send("Order already exits");
     }
-    else if (trade.result === 'Cannot Process Physical Instruments') {
-      console.log("Cannot Process Physical Instruments");
-      res.status(200).send("CPPI");
-    }
     else if (trade.result === 'error') {
       console.log("Failed to Execute 0x001",' ',trade.result);
       res.status(400).send("Failed to Execute 0x001");
     }
+  }
+  else{
+    console.log("Cannot Process Physical Instruments");
+    res.status(200).send("CPPI");
+  }
   } catch (error) {
     res.status(400).send("Failed to Execute 0x002");
   }

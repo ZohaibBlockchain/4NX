@@ -1,4 +1,4 @@
-import {getInstrument, checkAddress, nonLeverageTradeManager, LeverageTradeManager,getInstrumentAddress} from "../web3";
+import { getInstrument, checkAddress, nonLeverageTradeManager, LeverageTradeManager, getInstrumentAddress } from "../web3";
 
 
 
@@ -60,26 +60,20 @@ export async function registerTrade(info) {
     let count = await TradeModel.countDocuments({ orderID: info.orderID });
     let execCount = await TradeModel.countDocuments({ execID: info.execID });
     if (count == 0 && execCount == 0) {
-      if (info.instrumentType != 'CRYPTO' && info.instrumentType != 'EQ') {
-        const newTrade = new TradeModel({
-          walletAddress: info.walletAddress,
-          tokenAmount: info.tokenAmount,
-          tokenSymbol: info.tokenSymbol,
-          instrumentType: info.instrumentType,
-          side: info.side,
-          contractMultiplier: info.contractMultiplier,
-          instrumentName: info.instrumentName,
-          transactionHash: "0x00",
-          orderID: info.orderID,
-          execID: info.execID,
-        });
-        let x = await newTrade.save();
-        return { result: 'Unique', value: x };
-      }
-      else {
-        console.log('Here!');
-        return {result: 'Cannot Process Physical Instruments', value: 'x' };
-      }
+      const newTrade = new TradeModel({
+        walletAddress: info.walletAddress,
+        tokenAmount: info.tokenAmount,
+        tokenSymbol: info.tokenSymbol,
+        instrumentType: info.instrumentType,
+        side: info.side,
+        contractMultiplier: info.contractMultiplier,
+        instrumentName: info.instrumentName,
+        transactionHash: "0x00",
+        orderID: info.orderID,
+        execID: info.execID,
+      });
+      let x = await newTrade.save();
+      return { result: 'Unique', value: x };
     }
     else {
       return { result: 'Already exits', value: 'x' };
