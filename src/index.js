@@ -1,14 +1,15 @@
 //Beta version 1.1 of W3API...
-import {SignTrade} from "./web3";
+import { SignTrade } from "./web3";
 import express from "express";
 const bodyParser = require("body-parser");
-import {ExeTrade} from "./db/db";
+import { ExeTrade } from "./db/db";
 const mongoose = require("mongoose");
 import { router } from "./routes/routes";
 const https = require('https');
 const fs = require('fs');
 const WebSocket = require('ws');
 const path = require('path');
+const crypto = require('crypto');
 require("dotenv").config();
 let counter = 0;
 let Approvedclients = [];
@@ -27,6 +28,7 @@ function WSSserver() {
     });
     const wss = new WebSocket.Server({ server });
     wss.on('connection', (ws) => {
+      ws.id__ = stringToHash(ws.toString());
       console.log('Client connected');
       InitClient(ws);
     });
@@ -82,7 +84,7 @@ process.on('TypeError', function (err) {
 
 
 //-----------fuctions--------
-const updateSpeed = 2000;
+const updateSpeed = 20000;
 async function w3Engine() {
   let c = await ExeTrade();
   console.log(c);
@@ -97,11 +99,10 @@ async function w3Engine() {
 
 
 async function msgHandler(msg, ws) {
-
   if (checkClient(ws)) {
     switch (msg.messageType) {
       case 'auth': {
-        ws.send(JSON.stringify({messageType:'auth',message:'Already Approved'}));
+        ws.send(JSON.stringify({ messageType: 'auth', message: 'Already Approved' }));
         break;
       }
       case 'tokenInfo': {
@@ -109,31 +110,32 @@ async function msgHandler(msg, ws) {
         break;
       }
       case 'signOrder': {
-       let res = await SignTrade(msg.message);
-       ws.send(JSON.stringify({messageType:'signOrder',requestId:msg.requestId,inf:res}));
+        console.log(msg.message);
+        let res = await SignTrade(msg.message);
+        ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
         break;
       }
       default:
-        ws.send('Invalid Request!');
+        ws.send(JSON.stringify({ messageType: 'log', message:'Invalid Request!'}));
         break;
     }
   } else {
     switch (msg.messageType) {
       case 'auth': {
         if (msg.message == process.env.CTID) {
-          Approvedclients.push(ws);
-          ws.send(JSON.stringify({messageType:'auth',message:'Approved'}));
+           Approvedclients.push(ws.id__);
+          ws.send(JSON.stringify({ messageType: 'auth', message: 'Approved' }));
           return;
         } else {
           console.log('!Client Fired.');
-          ws.send(JSON.stringify({messageType:'auth',message:'Invalid key!'}));
+          ws.send(JSON.stringify({ messageType: 'auth', message: 'Invalid key!' }));
           ws.close();
         }
         break;
       }
       default:
         console.log('!Client Fired.');
-        ws.send('unauthorized connection detected.!');
+        ws.send(JSON.stringify({ messageType: 'log', message:'unauthorized connection detected.!'}));
         ws.close();
         break;
     }
@@ -143,14 +145,14 @@ async function msgHandler(msg, ws) {
 
 
 function InitClient(ws) {
-  ws.send('welcome! to the 4NX server v1.16.0.');
-  ws.send('Please provide connection key in order to use the service.');
+  ws.send(JSON.stringify({ messageType: 'log', message: 'welcome! to the 4NX server v1.16.0.' }));
+  ws.send(JSON.stringify({ messageType: 'log', message: 'Please provide connection key in order to use the service.' }));
   ws.on('message', (message) => {
     if (isJSON(message)) {
       let msg = JSON.parse(message);
       msgHandler(msg, ws);
     } else {
-      ws.send('Please use Valid Format for interaction.');
+      ws.send(JSON.stringify({ messageType: 'log', message: 'Please use Valid Format for interaction.' }));
       ws.close();
     }
   });
@@ -164,18 +166,18 @@ function InitClient(ws) {
 
 
 function checkClient(ws) {
+  let res = false;
   Approvedclients.forEach(id => {
-    if (id == ws.id) {
-      return true;
+    if (id.toString() == ws.id__.toString()) {
+      res = true;
     }
-
   });
-  return false;
+  return res;
 }
 
 function removeClient(ws) {
   for (let i = 0; i < Approvedclients.length; i++) {
-    if (Approvedclients[i].id == ws.id) {
+    if (Approvedclients[i].id == ws.id__) {
       Approvedclients.splice(i, 1);
     }
   }
@@ -207,3 +209,12 @@ function Errorlogger(error) {
   counter++;
   console.log(error);
 }
+
+
+function stringToHash(str) {
+  const hash = crypto.createHash('sha256').update(str).digest('hex');
+  return hash;
+}
+
+
+

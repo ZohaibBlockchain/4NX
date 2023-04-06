@@ -192,7 +192,7 @@ export async function getInstrumentAddress(symbol) {
     smartContractInf.Factory.ABI,
     wallet
   );
-  let _symbol = createSymbol(symbol, 'L');
+  let _symbol = createSymbol(symbol, 'any');
   let _name = symbol + '.X';
   let tokenAddress = await contract.getAddress(_name);
   if (ethers.constants.AddressZero == tokenAddress) {
@@ -207,29 +207,27 @@ export async function getInstrumentAddress(symbol) {
 
 
 
-
-
-
 export async function SignTrade(inf) {
   try {
     let _token = await getInstrumentAddress(inf.symbol);
-    let _blockRange = await (provider.getBlockNumber() + 5);//Trade will be valid for the next 5 block
+    let _blockRange = await (provider.getBlockNumber());//Trade will be valid for the next 5 block
     const _chainID = 1337;
-    const _tradeID = Math.floor(Math.random() * (9999999 - 1111111 + 1) + min);
-    const _inf = { name: '4NX', version: 1, chainId: _chainID, verifyingContract: smartContractInf.EIP712.Address, tradeID: _tradeID, price: inf.price, amount: inf.amount, blockRange: _blockRange, user: inf.user, token: _token };
+    const _tradeId = inf.tradeId;
+    inf.price = ethers.utils.parseEther(inf.price.toString());
+    inf.tradeAmount = ethers.utils.parseEther(inf.tradeAmount.toString());
+    const _inf = { name: '4NX', version: 1, chainId: _chainID, verifyingContract: smartContractInf.EIP712.Address, tradeId: _tradeId, price: inf.price, tradeAmount: inf.tradeAmount, blockRange: _blockRange + 5, walletAddress: inf.walletAddress, token: _token.address};
     const signer = new ethers.Wallet(account_from.privateKey);
     const signature = await signer._signTypedData(InfType.domain(_inf), InfType.types, InfType.val(_inf));
     const { r, s, v } = ethers.utils.splitSignature(signature);
     console.log(`r: ${r}`);
     console.log(`s: ${s}`);
     console.log(`v: ${v}`);
-    return { status: 'success', r: r, s: s, v: v, tradeID: _tradeID, price: inf.price, amount: inf.amount, blockRange: _blockRange, token: _token, type: _inf.type };
+    inf.price = ethers.utils.formatEther(ethers.BigNumber.from(inf.price._hex));
+    inf.tradeAmount = ethers.utils.formatEther(ethers.BigNumber.from(inf.tradeAmount._hex));
+    return { status: 'success', r: r, s: s, v: v, tradeId: _tradeId, price: inf.price, tradeAmount: inf.tradeAmount, blockRange: _blockRange + 5, token: _token.address};
   }
   catch (err) {
+    console.log(err);
     return { status: 'Failed', reason: err };
   }
 }
-
-
-
-
