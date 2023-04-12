@@ -42,26 +42,7 @@ export async function nonLeverageTradeManager(inf, tokenAddress) {
   //Nothing Right Now
 }
 
-// async function arrangeAddresses(tokenAddresses) {
-//   let tokens = [];
-//   let token1 = new ethers.Contract(tokenAddresses[0], tContractInfo.tokenABI, provider);
-//   let token2 = new ethers.Contract(tokenAddresses[1], tContractInfo.tokenABI, provider);
-//   let name1 = await token1.name.call();
-//   name1 = name1.slice(-1);
-//   let name2 = await token2.name.call();
-//   name2 = name2.slice(-1);
-//   if (name1 === 'L') {
-//     tokens[0] = tokenAddresses[0];
-//   } else {
-//     tokens[1] = tokenAddresses[0];
-//   }
-//   if (name2 === 'S') {
-//     tokens[1] = tokenAddresses[1];
-//   } else {
-//     tokens[0] = tokenAddresses[1];
-//   }
-//   return tokens;
-// }
+
 
 export async function LeverageTradeManager(inf, tokens) {
   try {
@@ -75,10 +56,10 @@ export async function LeverageTradeManager(inf, tokens) {
     );
     let tx = await contract.tradeLeverage(tokens[1], tokens[3], inf.walletAddress, inf.tokenAmount * 1000000, getside(inf.side), inf.orderID);
     let receipt = await tx.wait();
-    return {res:"Filled",tx:receipt.logs[0].transactionHash};
+    return { res: "Filled", tx: receipt.logs[0].transactionHash };
   }
   catch (error) {
-    return {res:"Failed"};
+    return { res: "Failed" };
   }
 }
 
@@ -192,11 +173,11 @@ export async function getInstrumentAddress(symbol) {
     smartContractInf.Factory.ABI,
     wallet
   );
-  let _symbol = createSymbol(symbol, 'any');
+  let _symbol = createSymbol(symbol, 'any');//here createSymbol 2nd prams is extra 
   let _name = symbol + '.X';
   let tokenAddress = await contract.getAddress(_name);
   if (ethers.constants.AddressZero == tokenAddress) {
-    let tx = await contract.deployNewERC20Token(_name, _symbol, '18');//here createSymbol 2nd prams is extra 
+    let tx = await contract.deployNewERC20Token(_name, _symbol, '18');
     let receipt = await tx.wait();
     return { symbol: _symbol, address: receipt.logs[0].address }
   }
@@ -206,25 +187,24 @@ export async function getInstrumentAddress(symbol) {
 }
 
 
+const blockRange__ = 2500;//It may change while testing the polygon network contracts
+const _chainID = 97;//It may also change when we change network
+const _name = '4NXDAPP';
+const _version = '1';
 
 export async function SignTrade(inf) {
   try {
     let _token = await getInstrumentAddress(inf.symbol);
-    let _blockRange = await (provider.getBlockNumber());//Trade will be valid for the next 5 block
-    const _chainID = 1337;
-    const _tradeId = inf.tradeId;
-    inf.price = ethers.utils.parseEther(inf.price.toString());
-    inf.tradeAmount = ethers.utils.parseEther(inf.tradeAmount.toString());
-    const _inf = { name: '4NX', version: 1, chainId: _chainID, verifyingContract: smartContractInf.EIP712.Address, tradeId: _tradeId, price: inf.price, tradeAmount: inf.tradeAmount, blockRange: _blockRange + 5, walletAddress: inf.walletAddress, token: _token.address};
-    const signer = new ethers.Wallet(account_from.privateKey);
-    const signature = await signer._signTypedData(InfType.domain(_inf), InfType.types, InfType.val(_inf));
-    const { r, s, v } = ethers.utils.splitSignature(signature);
+    let _blockRange = await (provider.getBlockNumber()) + blockRange__;//Trade will be valid for the next 5 block
+    const _tradeId = inf.orderId;
+    let _price = ethers.BigNumber.from(ethers.utils.parseEther(inf.price.toString())._hex).toString();
+    let _tradeAmount = ethers.BigNumber.from(ethers.utils.parseEther(inf.tradeAmount.toString())._hex).toString()
+    const _inf = { name: _name, version: _version, chainId: _chainID, verifyingContract: smartContractInf.EIP712.Address, tradeId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, walletAddress: inf.walletAddress, token: _token.address, privateKey: account_from.privateKey };
+    const { r, s, v } = await InfType.signData(_inf);
     console.log(`r: ${r}`);
     console.log(`s: ${s}`);
     console.log(`v: ${v}`);
-    inf.price = ethers.utils.formatEther(ethers.BigNumber.from(inf.price._hex));
-    inf.tradeAmount = ethers.utils.formatEther(ethers.BigNumber.from(inf.tradeAmount._hex));
-    return { status: 'success', r: r, s: s, v: v, tradeId: _tradeId, price: inf.price, tradeAmount: inf.tradeAmount, blockRange: _blockRange + 5, token: _token.address};
+    return { status: 'success', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address,factoryAbi:smartContractInf.Factory.ABI,tokenAbi:smartContractInf.USDX.ABI};
   }
   catch (err) {
     console.log(err);

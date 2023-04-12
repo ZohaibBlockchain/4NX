@@ -1,47 +1,36 @@
-export function domain(inf) {
-    let EIP712Domain = {
-      name: inf.name,
-      version: inf.version,
-      chainId: inf.chainId,
-      verifyingContract: inf.verifyingContract,
-    };
-    return EIP712Domain;
-  }
-  
+import { providers, Wallet, utils } from 'ethers';
 
+export async function signData(data) {
+  const provider = new providers.JsonRpcProvider();
+  const signer = new Wallet(data.privateKey, provider);
+  const domain = {
+    name: data.name,
+    version: data.version,
+    chainId: data.chainId, // Replace with the correct chainId for your network
+    verifyingContract: data.verifyingContract, // Replace with the address of your contract
+  };
 
-
-export const types = {
+  const types = {
     INF: [
-        { name: 'tradeId', type: 'uint256' },
-        { name: 'price', type: 'uint256' },
-        { name: 'tradeAmount', type: 'uint256' },
-        { name: 'blockRange', type: 'uint256'},
-        { name: 'walletAddress', type: 'address' },
-        { name: 'token', type: 'address' },
-    ]
-};
+      { name: 'tradeId', type: 'uint256' },
+      { name: 'price', type: 'uint256' },
+      { name: 'tradeAmount', type: 'uint256' },
+      { name: 'blockRange', type: 'uint256' },
+      { name: 'walletAddress', type: 'address' },
+      { name: 'token', type: 'address' },
+    ],
+  };
 
-export function val(inf) {
-    return {
-      ...inf,
-      tradeId: inf.tradeId,
-      price: inf.price,
-      tradeAmount: inf.tradeAmount,
-      blockRange: inf.blockRange,
-      walletAddress: inf.walletAddress,
-      token: inf.token,
-    };
-  }
-
-
-// export async function signMessage(inf) {
-//     const privateKey = inf;
-//     const signer = new ethers.Wallet(privateKey);
-//     const signature = await signer._signTypedData(domain(inf), types, val(inf));
-//     const { r, s, v } = ethers.utils.splitSignature(signature);
-//     console.log(`r: ${r}`);
-//     console.log(`s: ${s}`);
-//     console.log(`v: ${v}`);
-//     return {r:r,s:s,v:v};
-// }
+  const value = {
+    tradeId: data.tradeId,
+    price: data.price,
+    tradeAmount: data.tradeAmount,
+    blockRange: data.blockRange,
+    walletAddress: data.walletAddress,
+    token: data.token,
+  };
+ 
+  const signature = await signer._signTypedData(domain, types, value);
+  const { r, s, v } = utils.splitSignature(signature);
+  return { r, s, v };
+}

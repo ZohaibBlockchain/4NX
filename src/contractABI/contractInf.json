@@ -1,9 +1,9 @@
 {
     "EIP712": {
-        "Address": "0xc991b93bC6606677Ab45814401B7438D8eDa3186"
+        "Address": "0xb5ccbb0b5f9c81728bca3243ce5796897c676586"
     },
     "Factory": {
-        "Address": "0xc991b93bC6606677Ab45814401B7438D8eDa3186",
+        "Address": "0x33F268e6808d6e55cEDCAa5b807b47e9018cfb1b",
         "ABI": [
             {
                 "inputs": [
@@ -26,7 +26,7 @@
                         "type": "address"
                     }
                 ],
-                "name": "NewInstrument",
+                "name": "newInstrument",
                 "type": "event"
             },
             {
@@ -35,7 +35,7 @@
                     {
                         "indexed": false,
                         "internalType": "uint256",
-                        "name": "tradeID",
+                        "name": "tradeId",
                         "type": "uint256"
                     },
                     {
@@ -47,19 +47,19 @@
                     {
                         "indexed": false,
                         "internalType": "uint256",
-                        "name": "amount",
+                        "name": "tradeAmount",
                         "type": "uint256"
                     },
                     {
                         "indexed": false,
-                        "internalType": "uint8",
+                        "internalType": "uint256",
                         "name": "blockRange",
-                        "type": "uint8"
+                        "type": "uint256"
                     },
                     {
                         "indexed": false,
                         "internalType": "address",
-                        "name": "user",
+                        "name": "walletAddress",
                         "type": "address"
                     },
                     {
@@ -81,82 +81,47 @@
             {
                 "inputs": [
                     {
-                        "internalType": "string",
-                        "name": "name",
-                        "type": "string"
+                        "internalType": "bytes32",
+                        "name": "r",
+                        "type": "bytes32"
                     },
                     {
-                        "internalType": "string",
-                        "name": "symbol",
-                        "type": "string"
+                        "internalType": "bytes32",
+                        "name": "s",
+                        "type": "bytes32"
                     },
                     {
                         "internalType": "uint8",
-                        "name": "decimals",
+                        "name": "v",
                         "type": "uint8"
-                    }
-                ],
-                "name": "deployNewERC20Token",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "string",
-                        "name": "name",
-                        "type": "string"
-                    }
-                ],
-                "name": "getAddress",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function",
-                "constant": true
-            },
-            {
-                "inputs": [
+                    },
                     {
                         "internalType": "uint256",
-                        "name": "id",
+                        "name": "tradeId",
                         "type": "uint256"
-                    }
-                ],
-                "name": "getAddressByIndex",
-                "outputs": [
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tradeAmount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "blockRange",
+                        "type": "uint256"
+                    },
                     {
                         "internalType": "address",
-                        "name": "",
+                        "name": "token",
                         "type": "address"
                     }
                 ],
-                "stateMutability": "view",
-                "type": "function",
-                "constant": true
-            },
-            {
-                "inputs": [],
-                "name": "switchTransferMode",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "transferMode",
+                "name": "buy",
                 "outputs": [
                     {
                         "internalType": "bool",
@@ -164,37 +129,8 @@
                         "type": "bool"
                     }
                 ],
-                "stateMutability": "view",
-                "type": "function",
-                "constant": true
-            },
-            {
-                "inputs": [],
-                "name": "getTvmAddress",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function",
-                "constant": true
-            },
-            {
-                "inputs": [],
-                "name": "factoryOwner",
-                "outputs": [
-                    {
-                        "internalType": "address",
-                        "name": "",
-                        "type": "address"
-                    }
-                ],
-                "stateMutability": "view",
-                "type": "function",
-                "constant": true
+                "stateMutability": "nonpayable",
+                "type": "function"
             },
             {
                 "inputs": [
@@ -248,6 +184,199 @@
                 "inputs": [
                     {
                         "internalType": "address",
+                        "name": "usdAddress",
+                        "type": "address"
+                    }
+                ],
+                "name": "changeUSD",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "symbol",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "decimals",
+                        "type": "uint8"
+                    }
+                ],
+                "name": "deployNewERC20Token",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "factoryOwner",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    }
+                ],
+                "name": "getAddress",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "id",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getAddressByIndex",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getBaseTokenAddress",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getTvmAddress",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "bytes32",
+                        "name": "r",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "s",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "v",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tradeId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tradeAmount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "blockRange",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "token",
+                        "type": "address"
+                    }
+                ],
+                "name": "sell",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "switchTransferMode",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "transferMode",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
                         "name": "token",
                         "type": "address"
                     },
@@ -266,132 +395,11 @@
                 "outputs": [],
                 "stateMutability": "nonpayable",
                 "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "address",
-                        "name": "usdAddress",
-                        "type": "address"
-                    }
-                ],
-                "name": "changeUSD",
-                "outputs": [],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "bytes32",
-                        "name": "r",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "s",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "uint8",
-                        "name": "v",
-                        "type": "uint8"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "tradeID",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "price",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint8",
-                        "name": "blockRange",
-                        "type": "uint8"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "token",
-                        "type": "address"
-                    }
-                ],
-                "name": "buy",
-                "outputs": [
-                    {
-                        "internalType": "bool",
-                        "name": "",
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "bytes32",
-                        "name": "r",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "bytes32",
-                        "name": "s",
-                        "type": "bytes32"
-                    },
-                    {
-                        "internalType": "uint8",
-                        "name": "v",
-                        "type": "uint8"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "tradeID",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "price",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint256",
-                        "name": "amount",
-                        "type": "uint256"
-                    },
-                    {
-                        "internalType": "uint8",
-                        "name": "blockRange",
-                        "type": "uint8"
-                    },
-                    {
-                        "internalType": "address",
-                        "name": "token",
-                        "type": "address"
-                    }
-                ],
-                "name": "sell",
-                "outputs": [
-                    {
-                        "internalType": "bool",
-                        "name": "",
-                        "type": "bool"
-                    }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "function"
             }
         ]
     },
     "USDX": {
-        "Address": "0x57523A824192A96Da7b1BaC29F9E21D84D5665Cb",
+        "Address": "0x4ACf0953d8e5042F9468C888F4067c2B66B48038",
         "ABI": [
             {
                 "inputs": [],

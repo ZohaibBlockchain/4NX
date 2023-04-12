@@ -13,8 +13,7 @@ const crypto = require('crypto');
 require("dotenv").config();
 let counter = 0;
 let Approvedclients = [];
-
-
+let wsClients = [];
 
 
 
@@ -83,18 +82,22 @@ process.on('TypeError', function (err) {
 });
 
 
-//-----------fuctions--------
+//-----------functions--------
 const updateSpeed = 20000;
 async function w3Engine() {
-  let c = await ExeTrade();
-  console.log(c);
+  let e = await ExeTrade();
+  console.log(e);
+
+  wsClients.forEach(client => {
+    client.send(JSON.stringify({ messageType: 'log', message: 'Keep Alive' }));
+});
+
+
   setTimeout(() => { w3Engine(); }, updateSpeed);
 }
-//---------fuctions--------
+//---------functions--------
 //---------ExecutionBlock------
 //---------ExecutionBlock------
-
-
 
 
 
@@ -110,20 +113,20 @@ async function msgHandler(msg, ws) {
         break;
       }
       case 'signOrder': {
-        console.log(msg.message);
         let res = await SignTrade(msg.message);
         ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
         break;
       }
       default:
-        ws.send(JSON.stringify({ messageType: 'log', message:'Invalid Request!'}));
+        ws.send(JSON.stringify({ messageType: 'log', message: 'Invalid Request!' }));
         break;
     }
   } else {
     switch (msg.messageType) {
       case 'auth': {
         if (msg.message == process.env.CTID) {
-           Approvedclients.push(ws.id__);
+          Approvedclients.push(ws.id__);
+          wsClients.push(ws);
           ws.send(JSON.stringify({ messageType: 'auth', message: 'Approved' }));
           return;
         } else {
@@ -135,7 +138,7 @@ async function msgHandler(msg, ws) {
       }
       default:
         console.log('!Client Fired.');
-        ws.send(JSON.stringify({ messageType: 'log', message:'unauthorized connection detected.!'}));
+        ws.send(JSON.stringify({ messageType: 'log', message: 'unauthorized connection detected.!' }));
         ws.close();
         break;
     }
@@ -182,7 +185,6 @@ function removeClient(ws) {
     }
   }
 }
-
 
 
 function isJSON(str) {
