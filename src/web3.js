@@ -211,3 +211,35 @@ export async function SignTrade(inf) {
     return { status: 'Failed', reason: err };
   }
 }
+
+
+
+export async function tradeListener(wsClients){
+  const pk = account_from.privateKey;
+  let wallet = new ethers.Wallet(pk, provider);
+  let contract = new ethers.Contract(
+    smartContractInf.Factory.Address,
+    smartContractInf.Factory.ABI,
+    wallet
+  );
+
+  contract.on("trade", (tradeId, price, tradeAmount, blockRange, walletAddress, token, side) => {
+    // Do something with the event data
+    console.log(`New trade event received: tradeId=${tradeId}, price=${price}, tradeAmount=${tradeAmount}, blockRange=${blockRange}, walletAddress=${walletAddress}, token=${token}, side=${side}`);
+
+    const tradeEvent = {
+      tradeId: tradeId,
+      price: price,
+      tradeAmount: tradeAmount,
+      blockRange: blockRange,
+      walletAddress: walletAddress,
+      token: token,
+      side: side
+    };
+    wsClients.forEach(client => {
+      client.send(JSON.stringify({ messageType: 'tradeConfirm', message: tradeEvent }));
+  });
+  });
+  
+
+}

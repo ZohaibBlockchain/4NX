@@ -1,5 +1,5 @@
 //Beta version 1.1 of W3API...
-import { SignTrade } from "./web3";
+import { SignTrade,tradeListener } from "./web3";
 import express from "express";
 const bodyParser = require("body-parser");
 import { ExeTrade } from "./db/db";
@@ -19,6 +19,7 @@ let wsClients = [];
 
 Errorlogger('Init');
 WSSserver();
+tradeListener(wsClients);
 function WSSserver() {
   try {
     const server = https.createServer({
@@ -88,9 +89,7 @@ async function w3Engine() {
   let e = await ExeTrade();
   console.log(e);
 
-  wsClients.forEach(client => {
-    client.send(JSON.stringify({ messageType: 'log', message: 'Keep Alive' }));
-});
+ 
 
 
   setTimeout(() => { w3Engine(); }, updateSpeed);
@@ -217,6 +216,5 @@ function stringToHash(str) {
   const hash = crypto.createHash('sha256').update(str).digest('hex');
   return hash;
 }
-
 
 
