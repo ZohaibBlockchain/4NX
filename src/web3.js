@@ -187,7 +187,7 @@ export async function getInstrumentAddress(symbol) {
 }
 
 
-const blockRange__ = 2500;//It may change while testing the polygon network contracts
+const blockRange__ = 250;//It may change while testing the polygon network contracts
 const _chainID = 97;//It may also change when we change network
 const _name = '4NXDAPP';
 const _version = '1';
