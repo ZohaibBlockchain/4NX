@@ -1,5 +1,5 @@
 //Beta version 1.1 of W3API...
-import { SignTrade,tradeListener } from "./web3";
+import { SignTrade, tradeListener } from "./web3";
 import express from "express";
 const bodyParser = require("body-parser");
 import { ExeTrade } from "./db/db";
@@ -13,13 +13,13 @@ const crypto = require('crypto');
 require("dotenv").config();
 let counter = 0;
 let Approvedclients = [];
-let wsClients = [];
+
 
 
 
 Errorlogger('Init');
 WSSserver();
-tradeListener(wsClients);
+tradeListener(Approvedclients);
 function WSSserver() {
   try {
     const server = https.createServer({
@@ -67,7 +67,6 @@ mongoose
           process.kill(process.pid, "SIGINT");
         });
       });
-
     //-----------Express----------
   });
 
@@ -89,7 +88,7 @@ async function w3Engine() {
   let e = await ExeTrade();
   console.log(e);
 
- 
+
 
 
   setTimeout(() => { w3Engine(); }, updateSpeed);
@@ -101,6 +100,7 @@ async function w3Engine() {
 
 
 async function msgHandler(msg, ws) {
+  console.log(ws.id__);
   if (checkClient(ws)) {
     switch (msg.messageType) {
       case 'auth': {
@@ -124,8 +124,8 @@ async function msgHandler(msg, ws) {
     switch (msg.messageType) {
       case 'auth': {
         if (msg.message == process.env.CTID) {
-          Approvedclients.push(ws.id__);
-          wsClients.push(ws);
+          Approvedclients.push(ws);
+          // wsClients.push(ws);
           ws.send(JSON.stringify({ messageType: 'auth', message: 'Approved' }));
           return;
         } else {
@@ -169,21 +169,24 @@ function InitClient(ws) {
 
 function checkClient(ws) {
   let res = false;
-  Approvedclients.forEach(id => {
-    if (id.toString() == ws.id__.toString()) {
+  Approvedclients.forEach(ws => {
+    if (ws.id__.toString() == ws.id__.toString()) {
       res = true;
     }
   });
   return res;
 }
 
+
+
 function removeClient(ws) {
   for (let i = 0; i < Approvedclients.length; i++) {
-    if (Approvedclients[i].id == ws.id__) {
+    if (Approvedclients[i].id__.toString() == ws.id__.toString()) {
       Approvedclients.splice(i, 1);
     }
   }
 }
+
 
 
 function isJSON(str) {
