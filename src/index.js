@@ -104,7 +104,7 @@ async function msgHandler(msg, ws) {
   if (checkClient(ws)) {
     switch (msg.messageType) {
       case 'auth': {
-        ws.send(JSON.stringify({ messageType: 'auth', message: 'Already Approved' }));
+        ws.send(JSON.stringify({ messageType: 'auth', message: 'Already approved' }));
         break;
       }
       case 'tokenInfo': {
@@ -112,12 +112,25 @@ async function msgHandler(msg, ws) {
         break;
       }
       case 'signOrder': {
-        let res = await SignTrade(msg.message);
-        ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
+        try {
+          let res = await SignTrade(msg.message);
+          ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
+        } catch (error) {
+          ws.send(JSON.stringify({ messageType: 'signOrder', message: {status:'Failed'}}));
+        }
+        break;
+      }
+      case 'keepalive': {
+        try {
+          ws.send(JSON.stringify({ messageType: 'keepalive', message: msg.message }));
+        }
+        catch(error){
+          ws.send(JSON.stringify({ messageType: 'keepalive', message: 'error' }));
+        }
         break;
       }
       default:
-        ws.send(JSON.stringify({ messageType: 'log', message: 'Invalid Request!' }));
+        ws.send(JSON.stringify({ messageType: 'log', message: 'Invalid request!' }));
         break;
     }
   } else {
@@ -130,14 +143,14 @@ async function msgHandler(msg, ws) {
           return;
         } else {
           console.log('!Client Fired.');
-          ws.send(JSON.stringify({ messageType: 'auth', message: 'Invalid key!' }));
+          ws.send(JSON.stringify({ messageType: 'auth', message: 'Invalid key' }));
           ws.close();
         }
         break;
       }
       default:
         console.log('!Client Fired.');
-        ws.send(JSON.stringify({ messageType: 'log', message: 'unauthorized connection detected.!' }));
+        ws.send(JSON.stringify({ messageType: 'log', message: 'Unauthorized connection' }));
         ws.close();
         break;
     }
@@ -147,7 +160,7 @@ async function msgHandler(msg, ws) {
 
 
 function InitClient(ws) {
-  ws.send(JSON.stringify({ messageType: 'log', message: 'welcome! to the 4NX server v1.16.0.' }));
+  ws.send(JSON.stringify({ messageType: 'log', message: '4NX server v1.16.0' }));
   ws.send(JSON.stringify({ messageType: 'log', message: 'Please provide connection key in order to use the service.' }));
   ws.on('message', (message) => {
     if (isJSON(message)) {
