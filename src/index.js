@@ -114,9 +114,10 @@ async function msgHandler(msg, ws) {
       case 'signOrder': {
         try {
           let res = await SignTrade(msg.message);
+          console.log('Warning Test ', msg.message);
           ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
         } catch (error) {
-          ws.send(JSON.stringify({ messageType: 'signOrder', message: {status:'Failed'}}));
+          ws.send(JSON.stringify({ messageType: 'signOrder', message: { status: 'Failed' } }));
         }
         break;
       }
@@ -124,7 +125,7 @@ async function msgHandler(msg, ws) {
         try {
           ws.send(JSON.stringify({ messageType: 'keepalive', message: msg.message }));
         }
-        catch(error){
+        catch (error) {
           ws.send(JSON.stringify({ messageType: 'keepalive', message: 'error' }));
         }
         break;
