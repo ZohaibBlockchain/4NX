@@ -25,7 +25,7 @@ const defaultTokenUri = "https://icons.iconarchive.com/icons/cjdowner/cryptocurr
 
 
 router.get("/", (req, res) => {
-  res.send("Welcome to 4NX REST API!!!");
+  res.status(400).send("Welcome to 4NX REST API!!!");
 });
 
 
@@ -167,11 +167,11 @@ router.post("/tradeUpdate", async (req, res) => {
 
 
 router.get("*", function (req, res) {
-  res.send("Invalid request", 404);
+  res.status(400).send("Invalid request");
 });
 
 router.post("*", function (req, res) {
-  res.send("Invalid request", 404);
+  res.status(400).send("Invalid request");
 });
 
 
