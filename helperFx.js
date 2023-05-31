@@ -92,3 +92,36 @@ export function countStringLengths(arr) {
     }
     return totalLength;
 }
+
+
+
+export function createDeliverableSymbol(symbol) {
+    let symbolArr = symbol.split(".");
+        const newSymbolArray = symbolArr.filter(_str => !garbage.includes(_str));
+        if (countStringLengths(newSymbolArray) <= 8) {
+            symbol = newSymbolArray[0] + "." + newSymbolArray.slice(1).join(""); //Now <=9 digits here string
+            if (symbol.slice(-1) === ".") {
+                return symbol.toUpperCase() + 'X';
+            } else {
+                return symbol.toUpperCase() + '.X';
+            }
+        }
+        else {
+            symbol = newSymbolArray[0] + ".";
+            if (symbol.length <= 9) {
+                if (symbol.slice(-1) === ".") {
+                    return symbol.toUpperCase() + 'X';
+                } else {
+                    return symbol.toUpperCase() + '.X';
+                }
+            }
+            else {
+                symbol = symbol.slice(0, 9);
+                if (symbol.slice(-1) === ".") {
+                    return symbol.toUpperCase() + 'X';
+                } else {
+                    return symbol.toUpperCase() + '.X';
+                }
+            }
+        }
+}

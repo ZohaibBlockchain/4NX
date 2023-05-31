@@ -4,7 +4,7 @@ const fContractInfo = require("./contractABI/factory.json");
 const tContractInfo = require("./contractABI/token.json");
 const smartContractInf = require("./contractABI/contractInf.json");
 const InfType = require('./Types/type.js');
-import { createSymbol } from "../helperFx";
+import { createSymbol,createDeliverableSymbol } from "../helperFx";
 require('dotenv').config();
 
 const account_from = {
@@ -173,7 +173,7 @@ export async function getInstrumentAddress(symbol) {
     smartContractInf.Factory.ABI,
     wallet
   );
-  let _symbol = createSymbol(symbol, 'any');//here createSymbol 2nd prams is extra 
+  let _symbol = createDeliverableSymbol(symbol);//here createSymbol 2nd prams is extra 
   let _name = symbol + '.X';
   let tokenAddress = await contract.getAddress(_name);
   if (ethers.constants.AddressZero == tokenAddress) {
