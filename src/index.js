@@ -100,7 +100,7 @@ async function w3Engine() {
 
 
 async function msgHandler(msg, ws) {
-  console.log(ws.id__);
+  // console.log(ws.id__);
   if (checkClient(ws)) {
     switch (msg.messageType) {
       case 'auth': {

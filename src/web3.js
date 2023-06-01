@@ -237,6 +237,7 @@ export async function tradeListener(wsClients){
       side: side
     };
     wsClients.forEach(client => {
+      console.log(tradeEvent);
       client.send(JSON.stringify({ messageType: 'tradeConfirm', message: tradeEvent }));
   });
   });
