@@ -228,10 +228,10 @@ export async function tradeListener(wsClients){
     console.log(`New trade event received: tradeId=${tradeId}, price=${price}, tradeAmount=${tradeAmount}, blockRange=${blockRange}, walletAddress=${walletAddress}, token=${token}, side=${side}`);
 
     const tradeEvent = {
-      tradeId: ethers.utils.formatEther(tradeId),
-      price:ethers.utils.formatEther(price),
-      tradeAmount: ethers.utils.formatEther(tradeAmount),
-      blockRange: ethers.utils.formatEther(blockRange),
+      tradeId: ethers.BigNumber.from(tradeId).toString(),
+      price:   ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
+      tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
+      blockRange: ethers.BigNumber.from(blockRange).toString(),
       walletAddress: walletAddress,
       token: token,
       side: side
