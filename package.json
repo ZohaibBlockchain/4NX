@@ -6,7 +6,6 @@
   "scripts": {
     "start": "babel-node src/index.js"
   },
-  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
