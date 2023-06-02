@@ -4,7 +4,7 @@ const fContractInfo = require("./contractABI/factory.json");
 const tContractInfo = require("./contractABI/token.json");
 const smartContractInf = require("./contractABI/contractInf.json");
 const InfType = require('./Types/type.js');
-import { createSymbol,createDeliverableSymbol } from "../helperFx";
+import { createSymbol, createDeliverableSymbol } from "../helperFx";
 require('dotenv').config();
 
 const account_from = {
@@ -204,7 +204,7 @@ export async function SignTrade(inf) {
     console.log(`r: ${r}`);
     console.log(`s: ${s}`);
     console.log(`v: ${v}`);
-    return { status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address,factoryAbi:smartContractInf.Factory.ABI,tokenAbi:smartContractInf.USDX.ABI};
+    return { status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address, factoryAbi: smartContractInf.Factory.ABI, tokenAbi: smartContractInf.USDX.ABI };
   }
   catch (err) {
     console.log(err);
@@ -214,7 +214,7 @@ export async function SignTrade(inf) {
 
 
 
-export async function tradeListener(wsClients){
+export async function tradeListener(wsClients) {
   const pk = account_from.privateKey;
   let wallet = new ethers.Wallet(pk, provider);
   let contract = new ethers.Contract(
@@ -223,24 +223,32 @@ export async function tradeListener(wsClients){
     wallet
   );
 
-  contract.on("trade", (tradeId, price, tradeAmount, blockRange, walletAddress, token, side) => {
+  contract.on("trade", async (tradeId, price, tradeAmount, blockRange, walletAddress, token, side) => {
     // Do something with the event data
     console.log(`New trade event received: tradeId=${tradeId}, price=${price}, tradeAmount=${tradeAmount}, blockRange=${blockRange}, walletAddress=${walletAddress}, token=${token}, side=${side}`);
 
+    let tokenContract = new ethers.Contract(
+      token,
+      tContractInfo.tokenABI,
+      wallet
+    );
+    let symbol = await tokenContract.name();
+    symbol = symbol.splice(symbol.length - 2, 2);
     const tradeEvent = {
       tradeId: ethers.BigNumber.from(tradeId).toString(),
-      price:   ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
+      price: ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
       tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
       blockRange: ethers.BigNumber.from(blockRange).toString(),
       walletAddress: walletAddress,
       token: token,
-      side: side
+      side: (side === 1) ? 'BUY' : 'SELL',
+      symbol:symbol
     };
     wsClients.forEach(client => {
       console.log(tradeEvent);
       client.send(JSON.stringify({ messageType: 'tradeConfirm', message: tradeEvent }));
+    });
   });
-  });
-  
+
 
 }
