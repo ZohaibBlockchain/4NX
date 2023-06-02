@@ -233,9 +233,7 @@ export async function tradeListener(wsClients) {
       wallet
     );
     let symbol = await tokenContract.name();
-    console.log(symbol);
     symbol = symbol.substring(0, symbol.length - 2);
-    console.log(symbol,'afterChanged');
     const tradeEvent = {
       tradeId: ethers.BigNumber.from(tradeId).toString(),
       price: ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
