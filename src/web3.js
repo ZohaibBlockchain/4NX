@@ -242,7 +242,7 @@ export async function tradeListener(wsClients) {
       walletAddress: walletAddress,
       // token: token,
       side: (side === 1) ? 'BUY' : 'SELL',
-      symbol:symbol
+      instrument:symbol
     };
     wsClients.forEach(client => {
       console.log(tradeEvent);
