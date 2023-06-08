@@ -117,7 +117,7 @@ async function msgHandler(msg, ws) {
           console.log('Warning Test ', msg.message);
           ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
         } catch (error) {
-          ws.send(JSON.stringify({ messageType: 'signOrder', message: { status: 'Failed' } }));
+          ws.send(JSON.stringify({ messageType: 'signOrder', message: { status: 'Failed',orderId: msg.message.orderId} }));
         }
         break;
       }
