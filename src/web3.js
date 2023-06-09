@@ -208,7 +208,7 @@ export async function SignTrade(inf) {
   }
   catch (err) {
     console.log(err);
-    return { status: 'Failed', reason: err };
+    return { status: 'Failed',orderId:inf.orderId ,reason: err };
   }
 }
 
