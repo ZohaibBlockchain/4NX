@@ -24,7 +24,7 @@ router.use(express.urlencoded());
 const defaultTokenUri = "https://icons.iconarchive.com/icons/cjdowner/cryptocurrency/512/Basic-Attention-Token-icon.png";
 
 
-router.get("/", (req, res) => {
+router.get("/api/", (req, res) => {
   res.status(400).send("Welcome to 4NX REST API!!!");
 });
 
@@ -125,7 +125,7 @@ function flipValue(val) {
 }
 
 
-router.post("/tradeUpdate", async (req, res) => {
+router.post("/api/tradeUpdate", async (req, res) => {
   try {
     console.log(req.body);
     let Data = getNames(req.body.Message);

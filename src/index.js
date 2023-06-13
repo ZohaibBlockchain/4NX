@@ -157,7 +157,7 @@ async function msgHandler(msg, ws) {
 
 
 function InitClient(ws) {
-  ws.send(JSON.stringify({ messageType: 'log', message: '4NX server v1.16.0' }));
+  ws.send(JSON.stringify({ messageType: 'log', message: '4NX server v1.17.0' }));
   ws.send(JSON.stringify({ messageType: 'log', message: 'Please provide connection key in order to use the service.' }));
   ws.on('message', (message) => {
     if (isJSON(message)) {
