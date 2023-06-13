@@ -33,7 +33,7 @@ function WSSserver() {
       InitClient(ws);
     });
     server.listen(process.env.WSPORT, () => {
-      console.log('Server started on port 9999');
+      console.log('Server started on port 8000');
     });
   } catch (error) {
     Errorlogger(error.message);
@@ -83,20 +83,16 @@ process.on('TypeError', function (err) {
 
 
 //-----------functions--------
-const updateSpeed = 20000;
+const updateSpeed = 5000;
 async function w3Engine() {
   let e = await ExeTrade();
   console.log(e);
-
-
-
-
   setTimeout(() => { w3Engine(); }, updateSpeed);
 }
+
 //---------functions--------
 //---------ExecutionBlock------
 //---------ExecutionBlock------
-
 
 
 async function msgHandler(msg, ws) {
@@ -117,7 +113,7 @@ async function msgHandler(msg, ws) {
           console.log('Warning Test ', msg.message);
           ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
         } catch (error) {
-          ws.send(JSON.stringify({ messageType: 'signOrder', message: { status: 'Failed',orderId: msg.message.orderId} }));
+          ws.send(JSON.stringify({ messageType: 'signOrder', message: { status: 'Failed', orderId: msg.message.orderId } }));
         }
         break;
       }
@@ -190,6 +186,7 @@ function checkClient(ws) {
   });
   return res;
 }
+
 
 
 
