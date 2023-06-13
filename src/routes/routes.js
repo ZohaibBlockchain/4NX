@@ -30,7 +30,7 @@ router.get("/", (req, res) => {
 
 
 
-router.post("/tokendetails", async (req, res) => {
+router.post("/api/tokendetails", async (req, res) => {
   try {
     console.log(req.body);
     let inf = req.body;
