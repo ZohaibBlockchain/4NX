@@ -40,34 +40,45 @@ function WSSserver() {
   }
 }
 
+
+
+
 const ip = require("ip");
 const ipAddress = ip.address();
 
-mongoose
-  .connect(process.env.DBKEY, { useNewUrlParser: true })
+mongoose.connect(process.env.DBKEY, { useNewUrlParser: true })
   .then(() => {
-    //-----------Express----------
     const envport = process.env.SERVERPORT;
-    var app = express();
+    const app = express();
 
     app.use(router);
-    app
-      .listen(envport, function () {
-        console.log(`The SERVER HAS STARTED ON PORT: ${envport}`);
-        console.log(ipAddress);
-        w3Engine();
-      })
-      .on("error", function (err) {
-        console.log(err);
-        process.once("SIGUSR2", function () {
-          process.kill(process.pid, "SIGUSR2");
-        });
-        process.on("SIGINT", function () {
-          // this is only called on ctrl+c, not restart
-          process.kill(process.pid, "SIGINT");
-        });
+
+    const options = {
+      cert: fs.readFileSync(__dirname + '/certificates/cert.pem'),
+      key: fs.readFileSync(__dirname + '/certificates/key.pem')
+    };
+
+    const server = https.createServer(options, app);
+
+    server.listen(envport, function () {
+      console.log(`The SERVER HAS STARTED ON PORT: ${envport}`);
+      console.log(ipAddress);
+      w3Engine();
+    });
+
+    server.on("error", function (err) {
+      console.log(err);
+      process.once("SIGUSR2", function () {
+        process.kill(process.pid, "SIGUSR2");
       });
-    //-----------Express----------
+      process.on("SIGINT", function () {
+        // This is only called on Ctrl+C, not restart
+        process.kill(process.pid, "SIGINT");
+      });
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
 
 process.on('uncaughtException', function (err) {
@@ -78,157 +89,157 @@ process.on('uncaughtException', function (err) {
 process.on('TypeError', function (err) {
   Errorlogger(err.message);
   console.log("...");
-
 });
 
 
-//-----------functions--------
-const updateSpeed = 5000;
-async function w3Engine() {
-  let e = await ExeTrade();
-  console.log(e);
-  setTimeout(() => { w3Engine(); }, updateSpeed);
-}
 
-//---------functions--------
-//---------ExecutionBlock------
-//---------ExecutionBlock------
-
-
-async function msgHandler(msg, ws) {
-  // console.log(ws.id__);
-  if (checkClient(ws)) {
-    switch (msg.messageType) {
-      case 'auth': {
-        ws.send(JSON.stringify({ messageType: 'auth', message: 'Already approved' }));
-        break;
-      }
-      case 'tokenInfo': {
-        console.log('Needs to send token Information');
-        break;
-      }
-      case 'signOrder': {
-        try {
-          let res = await SignTrade(msg.message);
-          console.log('Warning Test ', msg.message);
-          ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
-        } catch (error) {
-          ws.send(JSON.stringify({ messageType: 'signOrder', message: { status: 'Failed', orderId: msg.message.orderId } }));
-        }
-        break;
-      }
-      case 'keepalive': {
-        try {
-          ws.send(JSON.stringify({ messageType: 'keepalive', message: msg.message }));
-        }
-        catch (error) {
-          ws.send(JSON.stringify({ messageType: 'keepalive', message: 'error' }));
-        }
-        break;
-      }
-      default:
-        ws.send(JSON.stringify({ messageType: 'log', message: 'Invalid request!' }));
-        break;
+    //-----------functions--------
+    const updateSpeed = 5000;
+    async function w3Engine() {
+      let e = await ExeTrade();
+      console.log(e);
+      setTimeout(() => { w3Engine(); }, updateSpeed);
     }
-  } else {
-    switch (msg.messageType) {
-      case 'auth': {
-        if (msg.message == process.env.CTID) {
-          Approvedclients.push(ws);
-          // wsClients.push(ws);
-          ws.send(JSON.stringify({ messageType: 'auth', message: 'Approved' }));
-          return;
+
+    //---------functions--------
+    //---------ExecutionBlock------
+    //---------ExecutionBlock------
+
+
+    async function msgHandler(msg, ws) {
+      // console.log(ws.id__);
+      if (checkClient(ws)) {
+        switch (msg.messageType) {
+          case 'auth': {
+            ws.send(JSON.stringify({ messageType: 'auth', message: 'Already approved' }));
+            break;
+          }
+          case 'tokenInfo': {
+            console.log('Needs to send token Information');
+            break;
+          }
+          case 'signOrder': {
+            try {
+              let res = await SignTrade(msg.message);
+              console.log('Warning Test ', msg.message);
+              ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
+            } catch (error) {
+              ws.send(JSON.stringify({ messageType: 'signOrder', message: { status: 'Failed', orderId: msg.message.orderId } }));
+            }
+            break;
+          }
+          case 'keepalive': {
+            try {
+              ws.send(JSON.stringify({ messageType: 'keepalive', message: msg.message }));
+            }
+            catch (error) {
+              ws.send(JSON.stringify({ messageType: 'keepalive', message: 'error' }));
+            }
+            break;
+          }
+          default:
+            ws.send(JSON.stringify({ messageType: 'log', message: 'Invalid request!' }));
+            break;
+        }
+      } else {
+        switch (msg.messageType) {
+          case 'auth': {
+            if (msg.message == process.env.CTID) {
+              Approvedclients.push(ws);
+              // wsClients.push(ws);
+              ws.send(JSON.stringify({ messageType: 'auth', message: 'Approved' }));
+              return;
+            } else {
+              console.log('!Client Fired.');
+              ws.send(JSON.stringify({ messageType: 'auth', message: 'Invalid key' }));
+              ws.close();
+            }
+            break;
+          }
+          default:
+            console.log('!Client Fired.');
+            ws.send(JSON.stringify({ messageType: 'log', message: 'Unauthorized connection' }));
+            ws.close();
+            break;
+        }
+      }
+    }
+
+
+
+    function InitClient(ws) {
+      ws.send(JSON.stringify({ messageType: 'log', message: '4NX server v1.17.0' }));
+      ws.send(JSON.stringify({ messageType: 'log', message: 'Please provide connection key in order to use the service.' }));
+      ws.on('message', (message) => {
+        if (isJSON(message)) {
+          let msg = JSON.parse(message);
+          msgHandler(msg, ws);
         } else {
-          console.log('!Client Fired.');
-          ws.send(JSON.stringify({ messageType: 'auth', message: 'Invalid key' }));
+          ws.send(JSON.stringify({ messageType: 'log', message: 'Please use Valid Format for interaction.' }));
           ws.close();
         }
-        break;
+      });
+
+      ws.on('close', () => {
+        console.log('Client disconnected');
+        removeClient(ws); //Remove from array...
+      });
+    }
+
+
+
+    function checkClient(ws) {
+      let res = false;
+      Approvedclients.forEach(ws => {
+        if (ws.id__.toString() == ws.id__.toString()) {
+          res = true;
+        }
+      });
+      return res;
+    }
+
+
+
+    function removeClient(ws) {
+      for (let i = 0; i < Approvedclients.length; i++) {
+        if (Approvedclients[i].id__.toString() == ws.id__.toString()) {
+          Approvedclients.splice(i, 1);
+        }
       }
-      default:
-        console.log('!Client Fired.');
-        ws.send(JSON.stringify({ messageType: 'log', message: 'Unauthorized connection' }));
-        ws.close();
-        break;
     }
-  }
-}
 
 
 
-function InitClient(ws) {
-  ws.send(JSON.stringify({ messageType: 'log', message: '4NX server v1.17.0' }));
-  ws.send(JSON.stringify({ messageType: 'log', message: 'Please provide connection key in order to use the service.' }));
-  ws.on('message', (message) => {
-    if (isJSON(message)) {
-      let msg = JSON.parse(message);
-      msgHandler(msg, ws);
-    } else {
-      ws.send(JSON.stringify({ messageType: 'log', message: 'Please use Valid Format for interaction.' }));
-      ws.close();
+    function isJSON(str) {
+      try {
+        JSON.parse(str);
+      } catch (e) {
+        return false;
+      }
+      return true;
     }
-  });
 
-  ws.on('close', () => {
-    console.log('Client disconnected');
-    removeClient(ws); //Remove from array...
-  });
-}
-
-
-
-function checkClient(ws) {
-  let res = false;
-  Approvedclients.forEach(ws => {
-    if (ws.id__.toString() == ws.id__.toString()) {
-      res = true;
+    function Errorlogger(error) {
+      if (counter == 0) {
+        fs.writeFile(__dirname + '/logs/logs.txt', 'Application Error Logs \n\n\n', function (err) {
+          if (err) throw err;
+          console.log('Logs cleaned.');
+        });
+      } else {
+        fs.appendFile((__dirname + '/logs/logs.txt'), `${counter}: ` + error + '\n', function (err) {
+          if (err) console.log('Unable to write error on file and the error is : ', err.message);
+          console.log('Data appended to file.');
+        });
+      }
+      counter++;
+      console.log(error);
     }
-  });
-  return res;
-}
 
 
 
-
-function removeClient(ws) {
-  for (let i = 0; i < Approvedclients.length; i++) {
-    if (Approvedclients[i].id__.toString() == ws.id__.toString()) {
-      Approvedclients.splice(i, 1);
+    function stringToHash(str) {
+      const hash = crypto.createHash('sha256').update(str).digest('hex');
+      return hash;
     }
-  }
-}
-
-
-
-function isJSON(str) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
-}
-
-function Errorlogger(error) {
-  if (counter == 0) {
-    fs.writeFile(__dirname + '/logs/logs.txt', 'Application Error Logs \n\n\n', function (err) {
-      if (err) throw err;
-      console.log('Logs cleaned.');
-    });
-  } else {
-    fs.appendFile((__dirname + '/logs/logs.txt'), `${counter}: ` + error + '\n', function (err) {
-      if (err) console.log('Unable to write error on file and the error is : ', err.message);
-      console.log('Data appended to file.');
-    });
-  }
-  counter++;
-  console.log(error);
-}
-
-
-function stringToHash(str) {
-  const hash = crypto.createHash('sha256').update(str).digest('hex');
-  return hash;
-}
 
 
