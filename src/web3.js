@@ -161,7 +161,7 @@ function getside(side) {
     return 1;
 }
 
-//-------------------------------------------Update v1.16.0
+//-------------------------------------------Update v1.17.0
 
 
 export async function getInstrumentAddress(symbol) {
