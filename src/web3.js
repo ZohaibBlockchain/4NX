@@ -175,8 +175,10 @@ export async function getInstrumentAddress(symbol) {
   let _symbol = createDeliverableSymbol(symbol);//here createSymbol 2nd prams is extra 
   let _name = symbol + '.X';
   let tokenAddress = await contract.getAddress(_name);
-  console.log('Check-1:',_name,tokenAddress);
+  console.log('Check-1:', _name, tokenAddress);
+
   if (ethers.constants.AddressZero == tokenAddress) {
+    console.log('$$$');
     let tx = await contract.deployNewERC20Token(_name, _symbol, '18');
     let receipt = await tx.wait();
     return { symbol: _symbol, address: receipt.logs[0].address }
@@ -208,7 +210,7 @@ export async function SignTrade(inf) {
   }
   catch (err) {
     console.log(err);
-    return { status: 'Failed',orderId:inf.orderId ,reason: err };
+    return { status: 'Failed', orderId: inf.orderId, reason: err };
   }
 }
 
@@ -242,7 +244,7 @@ export async function tradeListener(wsClients) {
       walletAddress: walletAddress,
       // token: token,
       side: (side === 1) ? 'BUY' : 'SELL',
-      instrument:symbol
+      instrument: symbol
     };
     wsClients.forEach(client => {
       console.log(tradeEvent);
