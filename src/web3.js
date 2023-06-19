@@ -24,7 +24,7 @@ const account_from = {
 const providerRPC = {
   matic: {
     name: "matic",
-    rpc: "https://polygon-mainnet.infura.io", // Insert your RPC URL here
+    rpc: "https://polygon-rpc.com/", // Insert your RPC URL here
     chainId: 137, //0x in hex,
   },
 };
