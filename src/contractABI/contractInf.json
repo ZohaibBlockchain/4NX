@@ -1,9 +1,9 @@
 {
     "EIP712": {
-        "Address": "0xb5ccbb0b5f9c81728bca3243ce5796897c676586"
+        "Address": "0x7714cbaac1acceafbd73c5726726bdc4df19de36"
     },
     "Factory": {
-        "Address": "0x33F268e6808d6e55cEDCAa5b807b47e9018cfb1b",
+        "Address": "0x8E201f8c6D9329752619d3138Ff93F7777A77dfD",
         "ABI": [
             {
                 "inputs": [
@@ -399,7 +399,7 @@
         ]
     },
     "USDX": {
-        "Address": "0x4ACf0953d8e5042F9468C888F4067c2B66B48038",
+        "Address": "0x3469e1C3B1BBfe3761431708ccCD1E6c2b8B44Af",
         "ABI": [
             {
                 "inputs": [],
