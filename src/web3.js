@@ -175,11 +175,10 @@ export async function getInstrumentAddress(symbol) {
   let _symbol = createDeliverableSymbol(symbol);//here createSymbol 2nd prams is extra 
   let _name = symbol + '.X';
   let tokenAddress = await contract.getAddress(_name);
-  console.log('Check-1:', _name, tokenAddress);
-
   if (ethers.constants.AddressZero == tokenAddress) {
-    console.log('$$$');
-    let tx = await contract.deployNewERC20Token(_name, _symbol, '18');
+    let gasPrice = await provider.getGasPrice(); // Get the current gas price
+    let increasedGasPrice = gasPrice.mul(10); // Adjust the factor as per your requirement
+    let tx = await contract.deployNewERC20Token(_name, _symbol, '18', { gasPrice: increasedGasPrice });
     let receipt = await tx.wait();
     return { symbol: _symbol, address: receipt.logs[0].address }
   }
