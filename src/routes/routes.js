@@ -32,7 +32,7 @@ router.get("/api/", (req, res) => {
 
 router.post("/api/tokendetails", async (req, res) => {
   try {
-    console.log(req.body);
+    console.log('Issue',req.body);
     let inf = req.body;
     let _type_ = inf.symbol.split(".")[0];
     if (_type_ == 'deliverable')//For Cash Instruments...
