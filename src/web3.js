@@ -22,15 +22,15 @@ const account_from = {
 
 
 const providerRPC = {
-  bscTestnet: {
-    name: "bscTestnet",
-    rpc: "https://data-seed-prebsc-1-s1.binance.org:8545", // Insert your RPC URL here
-    chainId: 97, //0x in hex,
+  matic: {
+    name: "matic",
+    rpc: "https://polygon-rpc.com/", // Insert your RPC URL here
+    chainId: 137, //0x in hex,
   },
 };
 // 3. Create ethers provider
 const provider = new ethers.providers.StaticJsonRpcProvider(
-  providerRPC.bscTestnet.rpc,
+  providerRPC.matic.rpc,
   {
     chainId: providerRPC.bscTestnet.chainId,
     name: providerRPC.bscTestnet.name,
