@@ -175,7 +175,7 @@ export async function getInstrumentAddress(symbol) {
   let _symbol = createDeliverableSymbol(symbol);//here createSymbol 2nd prams is extra 
   let _name = symbol + '.X';
   let tokenAddress = await contract.getAddress(_name);
-  console.log('Check-1:',_name,symbol);
+  console.log('Check-1:',_name,tokenAddress);
   if (ethers.constants.AddressZero == tokenAddress) {
     let tx = await contract.deployNewERC20Token(_name, _symbol, '18');
     let receipt = await tx.wait();
