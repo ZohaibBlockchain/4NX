@@ -37,6 +37,9 @@ router.post("/api/tokendetails", async (req, res) => {
     let _type_ = inf.symbol.split(".")[0];
     if (_type_ == 'deliverable')//For Cash Instruments...
     {
+      let tokenArr = inf.symbol.split(".");
+      tokenArr.shift();
+      inf.symbol = tokenArr.join(".");
       let _data = await  getInstrumentAddress(inf.symbol);
       let tokenDetails = { TokenSymbol:_data.symbol,TokenAddress:_data.address,TokenDecimal: '18', Icon: defaultTokenUri }
       console.log('warning:0x010 ',tokenDetails)
