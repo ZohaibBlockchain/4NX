@@ -39,6 +39,7 @@ router.post("/api/tokendetails", async (req, res) => {
     {
       let _data = await  getInstrumentAddress(inf.symbol);
       let tokenDetails = { TokenSymbol:_data.symbol,TokenAddress:_data.address,TokenDecimal: '18', Icon: defaultTokenUri }
+      console.log('warning:0x010 ',tokenDetails)
       res.status(200).send(tokenDetails);
     }
     else if(_type_ == 'leveraged') {//CFD Instruments
