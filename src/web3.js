@@ -28,12 +28,13 @@ const providerRPC = {
     chainId: 137, //0x in hex,
   },
 };
+
 // 3. Create ethers provider
 const provider = new ethers.providers.StaticJsonRpcProvider(
   providerRPC.matic.rpc,
   {
-    chainId: providerRPC.bscTestnet.chainId,
-    name: providerRPC.bscTestnet.name,
+    chainId: providerRPC.matic.chainId,
+    name: providerRPC.matic.name,
   }
 );
 
