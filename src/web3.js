@@ -24,7 +24,7 @@ const account_from = {
 const providerRPC = {
   matic: {
     name: "matic",
-    rpc: "https://polygon-rpc.com/", // Insert your RPC URL here
+    rpc: "https://polygon-mainnet.infura.io", // Insert your RPC URL here
     chainId: 137, //0x in hex,
   },
 };
@@ -164,8 +164,6 @@ function getside(side) {
 //-------------------------------------------Update v1.16.0
 
 
-
-
 export async function getInstrumentAddress(symbol) {
   const pk = account_from.privateKey;
   let wallet = new ethers.Wallet(pk, provider);
@@ -177,6 +175,7 @@ export async function getInstrumentAddress(symbol) {
   let _symbol = createDeliverableSymbol(symbol);//here createSymbol 2nd prams is extra 
   let _name = symbol + '.X';
   let tokenAddress = await contract.getAddress(_name);
+  console.log('Check-1:',_name,symbol);
   if (ethers.constants.AddressZero == tokenAddress) {
     let tx = await contract.deployNewERC20Token(_name, _symbol, '18');
     let receipt = await tx.wait();
