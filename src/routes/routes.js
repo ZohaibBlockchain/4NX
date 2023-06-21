@@ -32,7 +32,6 @@ router.get("/api/", (req, res) => {
 
 router.post("/api/tokendetails", async (req, res) => {
   try {
-    console.log('Issue',req.body);
     let inf = req.body;
     let _type_ = inf.symbol.split(".")[0];
     if (_type_ == 'deliverable')//For Cash Instruments...
@@ -46,51 +45,51 @@ router.post("/api/tokendetails", async (req, res) => {
       res.status(200).send(tokenDetails);
     }
     else if(_type_ == 'leveraged') {//CFD Instruments
-      let userCount = await userExits(inf.walletAddress);
+      // let userCount = await userExits(inf.walletAddress);
 
-      if (userCount > 0) {
-        let userInf = await getUserInstrumentSettings(inf.walletAddress);
-        // let instrumentDetails = detectInstrument(inf.symbol);
+      // if (userCount > 0) {
+      //   let userInf = await getUserInstrumentSettings(inf.walletAddress);
+      //   // let instrumentDetails = detectInstrument(inf.symbol);
        
-        let data = { instrumentName: inf.symbol, tokenSymbol:inf.symbol, instrumentType: _type_};
-        let r = await getInstrument(data);
-        let update = await updateTokenInfo(userInf.Instruments, inf.symbol, userInf._id);
+      //   let data = { instrumentName: inf.symbol, tokenSymbol:inf.symbol, instrumentType: _type_};
+      //   let r = await getInstrument(data);
+      //   let update = await updateTokenInfo(userInf.Instruments, inf.symbol, userInf._id);
 
 
-        if (update.value == 'Buy') {
-          let tokenDetails = { TokenSymbol: r[0], TokenAddress: r[1], TokenDecimal: '6', Icon: defaultTokenUri }
-          res.status(200).send(tokenDetails);
-          return;
-        } else {
-          let tokenDetails = { TokenSymbol:r[2], TokenAddress: r[3], TokenDecimal: '6', Icon: defaultTokenUri }
-          res.status(200).send(tokenDetails);
-          return;
-        }
-      }
-      else {
-        let obj = []; //Initialize with empty Array...
-        let createUser = await AddNewUser({ wallet: inf.walletAddress, instruments: obj });
+      //   if (update.value == 'Buy') {
+      //     let tokenDetails = { TokenSymbol: r[0], TokenAddress: r[1], TokenDecimal: '6', Icon: defaultTokenUri }
+      //     res.status(200).send(tokenDetails);
+      //     return;
+      //   } else {
+      //     let tokenDetails = { TokenSymbol:r[2], TokenAddress: r[3], TokenDecimal: '6', Icon: defaultTokenUri }
+      //     res.status(200).send(tokenDetails);
+      //     return;
+      //   }
+      // }
+      // else {
+      //   let obj = []; //Initialize with empty Array...
+      //   let createUser = await AddNewUser({ wallet: inf.walletAddress, instruments: obj });
 
-        if (createUser) {
-          let userInf = await getUserInstrumentSettings(inf.walletAddress);
-          let update = await updateTokenInfo(userInf.Instruments, inf.symbol, userInf._id);
+      //   if (createUser) {
+      //     let userInf = await getUserInstrumentSettings(inf.walletAddress);
+      //     let update = await updateTokenInfo(userInf.Instruments, inf.symbol, userInf._id);
 
-          let data = { instrumentName: inf.symbol, tokenSymbol: inf.symbol, instrumentType:_type_};
+      //     let data = { instrumentName: inf.symbol, tokenSymbol: inf.symbol, instrumentType:_type_};
 
-          console.log(data);
-          let r = await getInstrument(data);
+      //     console.log(data);
+      //     let r = await getInstrument(data);
 
-          if (update.value == 'Buy') {
-            let tokenDetails = { TokenSymbol: r[0], TokenAddress: r[1], TokenDecimal: '6', Icon: defaultTokenUri }
-            res.status(200).send(tokenDetails);
-            return;
-          } else {
-            let tokenDetails = { TokenSymbol: r[2], TokenAddress: r[3], TokenDecimal: '6', Icon: defaultTokenUri }
-            res.status(200).send(tokenDetails);
-            return;
-          }
-        }
-      }
+      //     if (update.value == 'Buy') {
+      //       let tokenDetails = { TokenSymbol: r[0], TokenAddress: r[1], TokenDecimal: '6', Icon: defaultTokenUri }
+      //       res.status(200).send(tokenDetails);
+      //       return;
+      //     } else {
+      //       let tokenDetails = { TokenSymbol: r[2], TokenAddress: r[3], TokenDecimal: '6', Icon: defaultTokenUri }
+      //       res.status(200).send(tokenDetails);
+      //       return;
+      //     }
+      //   }
+      // }
     }
     else{
       res.status(400).send('Invalid Format');
@@ -130,43 +129,44 @@ function flipValue(val) {
 
 
 router.post("/api/tradeUpdate", async (req, res) => {
-  try {
-    console.log(req.body);
-    let Data = getNames(req.body.Message);
-    console.log(Data.type);
-    if(Data.type == 'LEVERAGED')
-    {
-    let trade = await registerTrade({
-      walletAddress: Data.fullInfo.PartyID,
-      tokenAmount: Data.fullInfo.OrderQty,
-      tokenSymbol: Data.Symbol,
-      instrumentType: Data.type,
-      instrumentName: Data.Name,
-      side: Data.fullInfo.Side,
-      contractMultiplier: Data.fullInfo.ContractMultiplier,
-      orderID: Data.fullInfo.OrderID,
-      execID: Data.fullInfo.ExecID,
-    });
-    if (trade.result === 'Unique' ) {
-      res.status(200).send("Successfully Submitted");
-    }
-    else if (trade.result === 'Already exits') {
-      console.log("Order already exits");
-      res.status(200).send("Order already exits");
-    }
-    else if (trade.result === 'error') {
-      console.log("Failed to Execute 0x001",' ',trade.result);
-      res.status(400).send("Failed to Execute 0x001");
-    }
-  }
-  else{
-    console.log("Cannot Process Physical Instruments");
-    res.status(200).send("CPPI");
-  }
-  } catch (error) {
-    console.log(error);
-    res.status(400).send("Failed to Execute 0x002");
-  }
+  // try {
+  //   console.log(req.body);
+  //   let Data = getNames(req.body.Message);
+  //   console.log(Data.type);
+  //   if(Data.type == 'LEVERAGED')
+  //   {
+  //   let trade = await registerTrade({
+  //     walletAddress: Data.fullInfo.PartyID,
+  //     tokenAmount: Data.fullInfo.OrderQty,
+  //     tokenSymbol: Data.Symbol,
+  //     instrumentType: Data.type,
+  //     instrumentName: Data.Name,
+  //     side: Data.fullInfo.Side,
+  //     contractMultiplier: Data.fullInfo.ContractMultiplier,
+  //     orderID: Data.fullInfo.OrderID,
+  //     execID: Data.fullInfo.ExecID,
+  //   });
+  //   if (trade.result === 'Unique' ) {
+  //     res.status(200).send("Successfully Submitted");
+  //   }
+  //   else if (trade.result === 'Already exits') {
+  //     console.log("Order already exits");
+  //     res.status(200).send("Order already exits");
+  //   }
+  //   else if (trade.result === 'error') {
+  //     console.log("Failed to Execute 0x001",' ',trade.result);
+  //     res.status(400).send("Failed to Execute 0x001");
+  //   }
+  // }
+  // else{
+  //   console.log("Cannot Process Physical Instruments");
+  //   res.status(200).send("CPPI");
+  // }
+  // } catch (error) {
+  //   console.log(error);
+  //   res.status(400).send("Failed to Execute 0x002");
+  // }
+  res.status(200).send("Successfully Submitted");
 });
 
 

@@ -120,7 +120,7 @@ process.on('TypeError', function (err) {
           }
           case 'signOrder': {
             try {
-              console.log('Warning Test ', msg.message);
+              // console.log('Warning Test ', msg.message);
               let res = await SignTrade(msg.message);
               
               ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
