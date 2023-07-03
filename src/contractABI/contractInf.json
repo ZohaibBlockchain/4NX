@@ -1,9 +1,9 @@
 {
     "EIP712": {
-        "Address": "0x7714cbaac1acceafbd73c5726726bdc4df19de36"
+        "Address": "0xcf3549a5dc377847f94140ba465c58fe571a1ed6"
     },
     "Factory": {
-        "Address": "0x8E201f8c6D9329752619d3138Ff93F7777A77dfD",
+        "Address": "0x63eFeBDB1FB6328633f4586ce17e6c070F44d1E2",
         "ABI": [
             {
                 "inputs": [
