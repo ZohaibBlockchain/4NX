@@ -2,7 +2,13 @@
   "factoryAddress": "0x61fa3C7780E476Ff1b1E126C0b9edB07507F2508",
   "factoryABI": [
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "usd",
+          "type": "address"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "constructor"
     },
@@ -16,7 +22,7 @@
           "type": "address"
         }
       ],
-      "name": "ERC20CATokenCreated",
+      "name": "newInstrument",
       "type": "event"
     },
     {
@@ -24,35 +30,34 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "tradeId",
+          "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "value",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tradeAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "blockRange",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "address",
-          "name": "instrument",
+          "name": "walletAddress",
           "type": "address"
-        }
-      ],
-      "name": "Request",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
+        },
         {
           "indexed": false,
           "internalType": "address",
@@ -61,162 +66,58 @@
         },
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "orderID",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
+          "internalType": "uint8",
+          "name": "side",
+          "type": "uint8"
         }
       ],
-      "name": "Trade",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "tokenA",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "tokenB",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "orderID",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "TradeLeverage",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "transferID",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
-        }
-      ],
-      "name": "Transfer",
+      "name": "trade",
       "type": "event"
     },
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
+          "internalType": "bytes32",
+          "name": "r",
+          "type": "bytes32"
         },
         {
-          "internalType": "string",
-          "name": "_instrumentType",
-          "type": "string"
-        }
-      ],
-      "name": "changeInstrumentType",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
+          "internalType": "bytes32",
+          "name": "s",
+          "type": "bytes32"
         },
         {
-          "internalType": "string",
-          "name": "_name",
-          "type": "string"
-        }
-      ],
-      "name": "changeName",
-      "outputs": [
+          "internalType": "uint8",
+          "name": "v",
+          "type": "uint8"
+        },
         {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
+          "internalType": "uint256",
+          "name": "tradeId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tradeAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "blockRange",
+          "type": "uint256"
+        },
         {
           "internalType": "address",
           "name": "token",
           "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "_symbol",
-          "type": "string"
         }
       ],
-      "name": "changeSymbol",
+      "name": "buy",
       "outputs": [
         {
           "internalType": "bool",
@@ -254,6 +155,43 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "value",
+          "type": "bool"
+        }
+      ],
+      "name": "changeTokenPermission",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "usdAddress",
+          "type": "address"
+        }
+      ],
+      "name": "changeUSD",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "string",
           "name": "name",
           "type": "string"
@@ -267,16 +205,6 @@
           "internalType": "uint8",
           "name": "decimals",
           "type": "uint8"
-        },
-        {
-          "internalType": "string",
-          "name": "instrumentType",
-          "type": "string"
-        },
-        {
-          "internalType": "bool",
-          "name": "tradeable",
-          "type": "bool"
         }
       ],
       "name": "deployNewERC20Token",
@@ -342,29 +270,75 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getBaseTokenAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTvmAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "r",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "s",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint8",
+          "name": "v",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tradeId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tradeAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "blockRange",
+          "type": "uint256"
+        },
         {
           "internalType": "address",
           "name": "token",
           "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
         }
       ],
-      "name": "swap",
+      "name": "sell",
       "outputs": [
         {
           "internalType": "bool",
@@ -372,19 +346,6 @@
           "type": "bool"
         }
       ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
-        }
-      ],
-      "name": "switchTokenTransferPermission",
-      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -398,128 +359,22 @@
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "tradeAmount",
+          "type": "uint256"
+        },
+        {
           "internalType": "address",
-          "name": "token",
+          "name": "receiver",
           "type": "address"
         }
       ],
-      "name": "tokenTransferPermission",
+      "name": "transferEmitter",
       "outputs": [
         {
-          "internalType": "bool",
+          "internalType": "string",
           "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "walletAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint8",
-          "name": "side",
-          "type": "uint8"
-        },
-        {
-          "internalType": "uint256",
-          "name": "orderID",
-          "type": "uint256"
-        }
-      ],
-      "name": "trade",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "orderID",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "tradeEmit",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "long",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "short",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "walletAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint8",
-          "name": "side",
-          "type": "uint8"
-        },
-        {
-          "internalType": "uint256",
-          "name": "orderID",
-          "type": "uint256"
-        }
-      ],
-      "name": "tradeLeverage",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
+          "type": "string"
         }
       ],
       "stateMutability": "nonpayable",
@@ -542,28 +397,22 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "to",
+          "name": "token",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "value",
+          "name": "amount",
           "type": "uint256"
-        }
-      ],
-      "name": "transferRequest",
-      "outputs": [
+        },
         {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
+          "internalType": "address",
+          "name": "wallet",
+          "type": "address"
         }
       ],
+      "name": "withdraw",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     }
