@@ -163,7 +163,6 @@ function getside(side) {
 
 //-------------------------------------------Update v1.17.0
 
-
 export async function getInstrumentAddress(symbol) {
   const pk = account_from.privateKey;
   let wallet = new ethers.Wallet(pk, provider);
