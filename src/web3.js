@@ -223,9 +223,9 @@ export async function tradeListener(wsClients) {
     wallet
   );
 
-  contract.on("trade", async (tradeId, price, tradeAmount, blockRange, walletAddress, token, side) => {
+  contract.on("trade", async (tradeId, price, tradeAmount, blockRange, walletAddress,sender,token, side) => {
     // Do something with the event data
-    console.log(`New trade event received: tradeId=${tradeId}, price=${price}, tradeAmount=${tradeAmount}, blockRange=${blockRange}, walletAddress=${walletAddress}, token=${token}, side=${side}`);
+    console.log(`New trade event received: tradeId=${tradeId}, price=${price}, tradeAmount=${tradeAmount}, blockRange=${blockRange}, walletAddress=${walletAddress}, sender=${sender},token=${token}, side=${side}`);
 
     let tokenContract = new ethers.Contract(
       token,
@@ -234,20 +234,58 @@ export async function tradeListener(wsClients) {
     );
     let symbol = await tokenContract.name();
     symbol = symbol.substring(0, symbol.length - 2);
-    const tradeEvent = {
-      tradeId: ethers.BigNumber.from(tradeId).toString(),
-      price: ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
-      tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
-      blockRange: ethers.BigNumber.from(blockRange).toString(),
-      walletAddress: walletAddress,
-      // token: token,
-      side: (side === 1) ? 'BUY' : 'SELL',
-      instrument: symbol
-    };
-    wsClients.forEach(client => {
-      console.log(tradeEvent);
-      client.send(JSON.stringify({ messageType: 'tradeConfirm', message: tradeEvent }));
-    });
+   
+
+
+    if(tradeId == 0 && price == 0 && blockRange == 0)//Incase of Transfer Tokens
+    {
+      const tradeEvent1 = {
+        tradeId: ethers.BigNumber.from(tradeId).toString(),
+        price: ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
+        tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
+        blockRange: ethers.BigNumber.from(blockRange).toString(),
+        walletAddress: sender,
+        side:'SELL',
+        instrument: symbol
+      };
+      wsClients.forEach(client => {
+        console.log(tradeEvent1);
+        client.send(JSON.stringify({ messageType: 'tradeConfirm', message: tradeEvent1 }));
+      });
+
+      const tradeEvent2 = {
+        tradeId: ethers.BigNumber.from(tradeId).toString(),
+        price: ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
+        tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
+        blockRange: ethers.BigNumber.from(blockRange).toString(),
+        walletAddress: walletAddress,
+        side:'BUY',
+        instrument: symbol
+      };
+
+      wsClients.forEach(client => {
+        console.log(tradeEvent2);
+        client.send(JSON.stringify({ messageType: 'tradeConfirm', message: tradeEvent2 }));
+      });
+    }
+    else{//Simple Buy/Sell
+
+      const tradeEvent = {
+        tradeId: ethers.BigNumber.from(tradeId).toString(),
+        price: ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
+        tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
+        blockRange: ethers.BigNumber.from(blockRange).toString(),
+        walletAddress: walletAddress,
+        side: (side === 1) ? 'BUY' : 'SELL',
+        instrument: symbol
+      };
+
+
+      wsClients.forEach(client => {
+        console.log(tradeEvent);
+        client.send(JSON.stringify({ messageType: 'tradeConfirm', message: tradeEvent }));
+      });
+    }
   });
 
 
