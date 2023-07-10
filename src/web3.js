@@ -12,14 +12,6 @@ const account_from = {
     process.env.PK,
 };
 
-// const providerRPC = {
-//   matic: {
-//     name: "Polygon Mainnet",
-//     rpc: "https://polygon-rpc.com/",
-//     chainId: 137, 
-//   },
-// };
-
 
 const providerRPC = {
   matic: {
@@ -211,6 +203,7 @@ const _version = '1';
 
 export async function SignTrade(inf) {
   try {
+    console.log('Yahn tk');
     let _token = await getInstrumentAddress(inf.symbol);
     let _blockRange = await (provider.getBlockNumber()) + blockRange__;//Trade will be valid for the next 5 block
     const _tradeId = inf.orderId;
