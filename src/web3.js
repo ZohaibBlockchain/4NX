@@ -207,12 +207,13 @@ export async function SignTrade(inf) {
     let _token = await getInstrumentAddress(inf.symbol);
     
     let _blockRange = await (provider.getBlockNumber()) + blockRange__;//Trade will be valid for the next 5 block
-    console.log('Yahn tk ',_token);
+  
     const _tradeId = inf.orderId;
     let _price = ethers.BigNumber.from(ethers.utils.parseEther(inf.price.toString())._hex).toString();
     let _tradeAmount = ethers.BigNumber.from(ethers.utils.parseEther(inf.tradeAmount.toString())._hex).toString()
     const _inf = { name: _name, version: _version, chainId: _chainID, verifyingContract: smartContractInf.EIP712.Address, tradeId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, walletAddress: inf.walletAddress, token: _token.address, privateKey: account_from.privateKey };
     const { r, s, v } = await InfType.signData(_inf);
+    console.log('Yahn tk ',_token);
     console.log(`r: ${r}`);
     console.log(`s: ${s}`);
     console.log(`v: ${v}`);
