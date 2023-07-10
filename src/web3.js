@@ -39,6 +39,23 @@ const provider = new ethers.providers.StaticJsonRpcProvider(
 );
 
 
+
+ export async function checkNetworkStatus() {
+  try {
+    // Use the provider to retrieve the network block number
+    const blockNumber = await provider.getBlockNumber();
+    console.log('Network is working. Current block number:', blockNumber);
+  } catch (error) {
+    console.log('Network is not working:', error.message);
+  }
+}
+
+
+
+
+
+
+
 export async function nonLeverageTradeManager(inf, tokenAddress) {
   //Nothing Right Now
 }
@@ -223,7 +240,7 @@ export async function tradeListener(wsClients) {
     wallet
   );
 
-  contract.on("trade", async (tradeId, price, tradeAmount, blockRange, walletAddress,sender,token, side) => {
+  contract.on("trade", async (tradeId, price, tradeAmount, blockRange, walletAddress, sender, token, side) => {
     // Do something with the event data
     console.log(`New trade event received: tradeId=${tradeId}, price=${price}, tradeAmount=${tradeAmount}, blockRange=${blockRange}, walletAddress=${walletAddress}, sender=${sender},token=${token}, side=${side}`);
 
@@ -234,10 +251,10 @@ export async function tradeListener(wsClients) {
     );
     let symbol = await tokenContract.name();
     symbol = symbol.substring(0, symbol.length - 2);
-   
 
 
-    if(tradeId == 0 && price == 0 && blockRange == 0)//Incase of Transfer Tokens
+
+    if (tradeId == 0 && price == 0 && blockRange == 0)//Incase of Transfer Tokens
     {
       const tradeEvent1 = {
         tradeId: ethers.BigNumber.from(tradeId).toString(),
@@ -245,7 +262,7 @@ export async function tradeListener(wsClients) {
         tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
         blockRange: ethers.BigNumber.from(blockRange).toString(),
         walletAddress: sender,
-        side:'SELL',
+        side: 'SELL',
         instrument: symbol
       };
       wsClients.forEach(client => {
@@ -259,7 +276,7 @@ export async function tradeListener(wsClients) {
         tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
         blockRange: ethers.BigNumber.from(blockRange).toString(),
         walletAddress: walletAddress,
-        side:'BUY',
+        side: 'BUY',
         instrument: symbol
       };
 
@@ -268,7 +285,7 @@ export async function tradeListener(wsClients) {
         client.send(JSON.stringify({ messageType: 'tradeConfirm', message: tradeEvent2 }));
       });
     }
-    else{//Simple Buy/Sell
+    else {//Simple Buy/Sell
 
       const tradeEvent = {
         tradeId: ethers.BigNumber.from(tradeId).toString(),
