@@ -203,8 +203,9 @@ const _version = '1';
 
 export async function SignTrade(inf) {
   try {
-    console.log('Yahn tk');
+  
     let _token = await getInstrumentAddress(inf.symbol);
+    console.log('Yahn tk');
     let _blockRange = await (provider.getBlockNumber()) + blockRange__;//Trade will be valid for the next 5 block
     const _tradeId = inf.orderId;
     let _price = ethers.BigNumber.from(ethers.utils.parseEther(inf.price.toString())._hex).toString();
