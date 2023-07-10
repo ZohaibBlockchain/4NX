@@ -1,8 +1,8 @@
 import { providers, Wallet, utils } from 'ethers';
 
 export async function signData(data) {
-  const provider = new providers.JsonRpcProvider();
-  const signer = new Wallet(data.privateKey, provider);
+  // const provider = new providers.JsonRpcProvider();
+  const signer = new Wallet(data.privateKey, data.provider);
   const domain = {
     name: data.name,
     version: data.version,
