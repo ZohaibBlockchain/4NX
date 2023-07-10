@@ -19,12 +19,12 @@ const account_from = {
 //     chainId: 137, 
 //   },
 // };
-
+MATICAPI
 
 const providerRPC = {
   matic: {
     name: "matic",
-    rpc: "https://polygon-rpc.com/", // Insert your RPC URL here
+    rpc: process.env.MATICAPI, // Insert your RPC URL here
     chainId: 137, //0x in hex,
   },
 };
