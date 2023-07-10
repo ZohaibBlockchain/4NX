@@ -32,7 +32,7 @@ const provider = new ethers.providers.StaticJsonRpcProvider(
 
 
 
- export async function checkNetworkStatus() {
+export async function checkNetworkStatus() {
   try {
     // Use the provider to retrieve the network block number
     const blockNumber = await provider.getBlockNumber();
@@ -174,11 +174,11 @@ function getside(side) {
 
 export async function getInstrumentAddress(symbol) {
   const pk = account_from.privateKey;
-  let wallet = new ethers.Wallet(pk, provider);
+  let signer = new ethers.Wallet(pk, provider);
   let contract = new ethers.Contract(
     smartContractInf.Factory.Address,
     smartContractInf.Factory.ABI,
-    wallet
+    signer
   );
   let _symbol = createDeliverableSymbol(symbol);//here createSymbol 2nd prams is extra 
   let _name = symbol + '.X';
@@ -203,17 +203,16 @@ const _version = '1';
 
 export async function SignTrade(inf) {
   try {
-  
+
     let _token = await getInstrumentAddress(inf.symbol);
-    
+
     let _blockRange = await (provider.getBlockNumber()) + blockRange__;//Trade will be valid for the next 5 block
-  
+
     const _tradeId = inf.orderId;
     let _price = ethers.BigNumber.from(ethers.utils.parseEther(inf.price.toString())._hex).toString();
     let _tradeAmount = ethers.BigNumber.from(ethers.utils.parseEther(inf.tradeAmount.toString())._hex).toString()
-    const _inf = { name: _name, version: _version, chainId: _chainID, verifyingContract: smartContractInf.EIP712.Address, tradeId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, walletAddress: inf.walletAddress, token: _token.address, privateKey: account_from.privateKey,provider:provider };
+    const _inf = { name: _name, version: _version, chainId: _chainID, verifyingContract: smartContractInf.EIP712.Address, tradeId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, walletAddress: inf.walletAddress, token: _token.address, privateKey: account_from.privateKey, provider: provider };
     const { r, s, v } = await InfType.signData(_inf);
-    console.log('Yahn tk ',_token);
     console.log(`r: ${r}`);
     console.log(`s: ${s}`);
     console.log(`v: ${v}`);
