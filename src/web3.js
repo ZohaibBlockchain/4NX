@@ -19,7 +19,7 @@ const account_from = {
 //     chainId: 137, 
 //   },
 // };
-MATICAPI
+
 
 const providerRPC = {
   matic: {
