@@ -7,6 +7,15 @@ const InfType = require('./Types/type.js');
 import { createSymbol, createDeliverableSymbol } from "../helperFx";
 require('dotenv').config();
 
+
+
+export const DECIMAL = 18;
+const blockRange__ = 20;
+const _chainID = 137;
+const _name = '4NXDAPP';
+const _version = '1';
+
+
 const account_from = {
   privateKey:
     process.env.PK,
@@ -16,8 +25,8 @@ const account_from = {
 const providerRPC = {
   matic: {
     name: "matic",
-    rpc: process.env.MATICAPI, // Insert your RPC URL here
-    chainId: 137, //0x in hex,
+    rpc: process.env.MATICAPI, 
+    chainId: _chainID, 
   },
 };
 
@@ -186,7 +195,7 @@ export async function getInstrumentAddress(symbol) {
   if (ethers.constants.AddressZero == tokenAddress) {
     let gasPrice = await provider.getGasPrice(); // Get the current gas price
     let increasedGasPrice = gasPrice.mul(10); // Adjust the factor as per your requirement
-    let tx = await contract.deployNewERC20Token(_name, _symbol, '18', { gasPrice: increasedGasPrice });
+    let tx = await contract.deployNewERC20Token(_name, _symbol, DECIMAL, { gasPrice: increasedGasPrice });
     let receipt = await tx.wait();
     return { symbol: _symbol, address: receipt.logs[0].address }
   }
@@ -196,10 +205,7 @@ export async function getInstrumentAddress(symbol) {
 }
 
 
-const blockRange__ = 20;//It may change while testing the polygon network contracts
-const _chainID = 137;//It may also change when we change network
-const _name = '4NXDAPP';
-const _version = '1';
+
 
 export async function SignTrade(inf) {
   try {
@@ -209,8 +215,11 @@ export async function SignTrade(inf) {
     let _blockRange = await (provider.getBlockNumber()) + blockRange__;//Trade will be valid for the next 5 block
 
     const _tradeId = inf.orderId;
-    let _price = ethers.BigNumber.from(ethers.utils.parseEther(inf.price.toString())._hex).toString();
-    let _tradeAmount = ethers.BigNumber.from(ethers.utils.parseEther(inf.tradeAmount.toString())._hex).toString()
+    // Convert price to the token's base unit (wei)
+    let _price = ethers.utils.parseUnits(inf.price.toString(), DECIMAL).toString();
+    // Convert trade amount to the token's base unit (wei)
+    let _tradeAmount = ethers.utils.parseUnits(inf.tradeAmount.toString(), DECIMAL).toString();
+
     const _inf = { name: _name, version: _version, chainId: _chainID, verifyingContract: smartContractInf.EIP712.Address, tradeId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, walletAddress: inf.walletAddress, token: _token.address, privateKey: account_from.privateKey, provider: provider };
     const { r, s, v } = await InfType.signData(_inf);
     console.log(`r: ${r}`);
@@ -253,8 +262,8 @@ export async function tradeListener(wsClients) {
     {
       const tradeEvent1 = {
         tradeId: ethers.BigNumber.from(tradeId).toString(),
-        price: ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
-        tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
+        price: ethers.utils.formatUnits(price.toString(), DECIMAL).toString(),
+        tradeAmount: ethers.utils.formatUnits(tradeAmount.toString(), DECIMAL).toString(),
         blockRange: ethers.BigNumber.from(blockRange).toString(),
         walletAddress: sender,
         side: 'SELL',
@@ -267,8 +276,8 @@ export async function tradeListener(wsClients) {
 
       const tradeEvent2 = {
         tradeId: ethers.BigNumber.from(tradeId).toString(),
-        price: ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
-        tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
+        price: ethers.utils.formatUnits(price.toString(), DECIMAL).toString(),
+        tradeAmount: ethers.utils.formatUnits(tradeAmount.toString(), DECIMAL).toString(),
         blockRange: ethers.BigNumber.from(blockRange).toString(),
         walletAddress: walletAddress,
         side: 'BUY',
@@ -284,8 +293,8 @@ export async function tradeListener(wsClients) {
 
       const tradeEvent = {
         tradeId: ethers.BigNumber.from(tradeId).toString(),
-        price: ethers.utils.formatEther(ethers.BigNumber.from(price).toString()),
-        tradeAmount: ethers.utils.formatEther(ethers.BigNumber.from(tradeAmount).toString()),
+        price: ethers.utils.formatUnits(price.toString(), DECIMAL).toString(),
+        tradeAmount: ethers.utils.formatUnits(tradeAmount.toString(), DECIMAL).toString(),
         blockRange: ethers.BigNumber.from(blockRange).toString(),
         walletAddress: walletAddress,
         side: (side === 1) ? 'BUY' : 'SELL',

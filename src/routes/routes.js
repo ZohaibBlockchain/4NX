@@ -14,7 +14,8 @@ import { getNames} from "../../helperFx";
 
 import {
   getInstrument,
-  getInstrumentAddress
+  getInstrumentAddress,
+  DECIMAL,
 } from "../web3";
 const bodyParser = require("body-parser");
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -32,6 +33,7 @@ router.get("/api/", (req, res) => {
 
 router.post("/api/tokendetails", async (req, res) => {
   try {
+    console.log(req.body);
     let inf = req.body;
     let _type_ = inf.symbol.split(".")[0];
     if (_type_ == 'deliverable')//For Cash Instruments...
@@ -40,7 +42,7 @@ router.post("/api/tokendetails", async (req, res) => {
       tokenArr.shift();
       inf.symbol = tokenArr.join(".");
       let _data = await  getInstrumentAddress(inf.symbol);
-      let tokenDetails = { TokenSymbol:_data.symbol,TokenAddress:_data.address,TokenDecimal: '18', Icon: defaultTokenUri }
+      let tokenDetails = { TokenSymbol:_data.symbol,TokenAddress:_data.address,TokenDecimal: DECIMAL, Icon: defaultTokenUri }
       console.log('warning:0x010 ',tokenDetails)
       res.status(200).send(tokenDetails);
     }
