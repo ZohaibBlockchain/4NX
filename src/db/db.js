@@ -104,9 +104,11 @@ export async function ExeTrade() {
       if (pending)//Pending write sucessfully
       {
         let res = await LeverageTradeManager(trade, addresses);
+        console.log(res);
         if(res.res == 'Failed')
         {
           return await TradeModel.updateOne({ _id: trade._id }, { transactionHash: '0x00' });
+          console.log('XXXXXX');
         }else{
           return await TradeModel.updateOne({ _id: trade._id }, { transactionHash: res.tx});
         }
