@@ -73,8 +73,10 @@ export async function LeverageTradeManager(inf, tokens) {
       fContractInfo.factoryABI,
       wallet
     );
+    let gasPrice = await provider.getGasPrice(); // Get the current gas price
+    let increasedGasPrice = gasPrice.mul(10); // Adjust the factor as per your requirement
     const amount = ethers.utils.parseUnits(inf.tokenAmount.toString(), DECIMAL).toString();
-    let tx = await contract.tradeLeverage(tokens[1], tokens[3], inf.walletAddress, amount, getside(inf.side), inf.orderID);
+    let tx = await contract.tradeLeverage(tokens[1], tokens[3], inf.walletAddress, amount, getside(inf.side), inf.orderID, { gasPrice: increasedGasPrice });
     let receipt = await tx.wait();
     return { res: "Filled", tx: receipt.logs[0].transactionHash };
   }
