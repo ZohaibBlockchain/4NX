@@ -79,6 +79,8 @@ export async function LeverageTradeManager(inf, tokens) {
     return { res: "Filled", tx: receipt.logs[0].transactionHash };
   }
   catch (error) {
+    console.clear();
+    console.log(error)
     return { res: "Failed" };
   }
 }
