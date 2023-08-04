@@ -94,13 +94,13 @@ process.on('TypeError', function (err) {
 
 
 //-----------functions--------
-
-const updateSpeed = 5000;
+const updateSpeed = 1000;
 async function w3Engine() {
   await checkNetworkStatus();
+  let e = await ExeTrade();
+  console.log(e);
   setTimeout(() => { w3Engine(); }, updateSpeed);
 }
-
 //---------functions--------
 //---------ExecutionBlock------
 //---------ExecutionBlock------

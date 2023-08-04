@@ -168,7 +168,6 @@ router.post("/api/tradeUpdate", async (req, res) => {
     console.log(error);
     res.status(400).send("Failed to Execute 0x002");
   }
-  res.status(200).send("Successfully Submitted");
 });
 
 
