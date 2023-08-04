@@ -9,7 +9,7 @@ require('dotenv').config();
 
 
 
-export const DECIMAL = 4;
+export const DECIMAL = 6;
 const blockRange__ = 20;
 const _chainID = 137;
 const _name = '4NXDAPP';
