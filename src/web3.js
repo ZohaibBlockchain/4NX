@@ -9,7 +9,7 @@ require('dotenv').config();
 
 
 
-export const DECIMAL = 18;
+export const DECIMAL = 4;
 const blockRange__ = 20;
 const _chainID = 137;
 const _name = '4NXDAPP';
@@ -139,7 +139,11 @@ export async function createOrValidate(address, symbol, name) {
       wallet
     );
 
-    let tx = await contract.deployNewERC20Token(name, symbol, DECIMAL, 'leveraged', true);
+
+    let gasPrice = await provider.getGasPrice(); // Get the current gas price
+    let increasedGasPrice = gasPrice.mul(10); // Adjust the factor as per your requirement
+
+    let tx = await contract.deployNewERC20Token(name, symbol, DECIMAL, 'leveraged', true,{ gasPrice: increasedGasPrice });
     let receipt = await tx.wait();
     return receipt.logs[0].address;
   }
