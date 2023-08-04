@@ -25,8 +25,8 @@ const account_from = {
 const providerRPC = {
   matic: {
     name: "matic",
-    rpc: process.env.MATICAPI, 
-    chainId: _chainID, 
+    rpc: process.env.MATICAPI,
+    chainId: _chainID,
   },
 };
 
@@ -73,7 +73,8 @@ export async function LeverageTradeManager(inf, tokens) {
       fContractInfo.factoryABI,
       wallet
     );
-    let tx = await contract.tradeLeverage(tokens[1], tokens[3], inf.walletAddress, inf.tokenAmount * 1000000, getside(inf.side), inf.orderID);
+    const amount = ethers.utils.parseUnits(inf.tokenAmount.toString(), DECIMAL).toString();
+    let tx = await contract.tradeLeverage(tokens[1], tokens[3], inf.walletAddress, amount, getside(inf.side), inf.orderID);
     let receipt = await tx.wait();
     return { res: "Filled", tx: receipt.logs[0].transactionHash };
   }
@@ -138,7 +139,7 @@ export async function createOrValidate(address, symbol, name) {
       wallet
     );
 
-    let tx = await contract.deployNewERC20Token(name, symbol, '6', 'leveraged', true);
+    let tx = await contract.deployNewERC20Token(name, symbol, DECIMAL, 'leveraged', true);
     let receipt = await tx.wait();
     return receipt.logs[0].address;
   }
