@@ -10,7 +10,7 @@ require('dotenv').config();
 
 
 export const DECIMAL = 6;
-const blockRange__ = 20;
+const blockRange__ = 15;
 const _chainID = 137;
 const _name = '4NXDAPP';
 const _version = '1';
@@ -160,6 +160,7 @@ export async function createOrValidate(address, symbol, name) {
 
 
 
+
 export function checkLeverageInstruments(type) {
 
   let _type = splitSymbol(type);
@@ -204,7 +205,7 @@ export async function getInstrumentAddress(symbol) {
   if (ethers.constants.AddressZero == tokenAddress) {
     let gasPrice = await provider.getGasPrice(); // Get the current gas price
     let increasedGasPrice = gasPrice.mul(10); // Adjust the factor as per your requirement
-    let tx = await contract.deployNewERC20Token(_name, _symbol, DECIMAL, { gasPrice: increasedGasPrice });
+    let tx = await contract.deployNewERC20Token(_name, _symbol, { gasPrice: increasedGasPrice });
     let receipt = await tx.wait();
     return { symbol: _symbol, address: receipt.logs[0].address }
   }
