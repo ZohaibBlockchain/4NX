@@ -10,7 +10,7 @@ require('dotenv').config();
 
 
 export const DECIMAL = 6;
-const blockRange__ = 15;
+const blockRange__ = 20;
 const _chainID = 137;
 const _name = '4NXDAPP';
 const _version = '1';
@@ -235,6 +235,7 @@ export async function SignTrade(inf) {
     console.log(`r: ${r}`);
     console.log(`s: ${s}`);
     console.log(`v: ${v}`);
+    console.log({status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address, factoryAbi: smartContractInf.Factory.ABI, tokenAbi: 'USDX.ABI'})
     return { status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address, factoryAbi: smartContractInf.Factory.ABI, tokenAbi: smartContractInf.USDX.ABI };
   }
   catch (err) {
