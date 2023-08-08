@@ -236,7 +236,7 @@ export async function SignTrade(inf) {
     console.log(`s: ${s}`);
     console.log(`v: ${v}`);
     console.log({status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address, factoryAbi: smartContractInf.Factory.ABI, tokenAbi: 'USDX.ABI'})
-    return { status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address, factoryAbi: smartContractInf.Factory.ABI, tokenAbi: smartContractInf.USDX.ABI };
+    return { status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address, factoryAbi: smartContractInf.Factory.ABI, tokenAbi: smartContractInf.USDX.ABI,decimal: DECIMAL};
   }
   catch (err) {
     console.log(err);
