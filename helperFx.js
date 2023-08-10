@@ -1,17 +1,17 @@
-import { parse } from "fixparserjs";
+
 
 let garbage = ["BO", "FU", "_SPOT", "CFD", "FX", "CRYPTO", "CASH", "EQ", "INDEX", "COMMODITY", "deliverable", "leveraged"];
 
 
 
-export function getNames(dataArr) {
-    let Data = parse(dataArr, '^').Body;
-    if (checkInstrument(Data.Symbol)) {
-        return { Name: 'LEVERAGED.' + Data.Symbol, Symbol: Data.Symbol, type: 'LEVERAGED', fullInfo: Data };
-    } else {
-        return { Name: 'DELIVERABLE' + Data.Symbol, Symbol: Data.Symbol, type: 'DELIVERABLE', fullInfo: Data };
-    }
-}
+// export function getNames(dataArr) {
+//     let Data = parse(dataArr, '^').Body;
+//     if (checkInstrument(Data.Symbol)) {
+//         return { Name: 'LEVERAGED.' + Data.Symbol, Symbol: Data.Symbol, type: 'LEVERAGED', fullInfo: Data };
+//     } else {
+//         return { Name: 'DELIVERABLE' + Data.Symbol, Symbol: Data.Symbol, type: 'DELIVERABLE', fullInfo: Data };
+//     }
+// }
 
 
 

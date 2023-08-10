@@ -18,7 +18,6 @@
     "dotenv": "^16.0.3",
     "ethers": "^5.7.1",
     "express": "^4.18.2",
-    "fixparserjs": "^1.0.0",
     "free-fx": "^1.0.0",
     "fs": "^0.0.1-security",
     "ip": "^2.0.0",
