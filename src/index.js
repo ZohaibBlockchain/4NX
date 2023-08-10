@@ -1,8 +1,9 @@
 //Beta version 1.1 of W3API...
+import { fixClient } from "./fixClient";
 import { SignTrade, tradeListener, checkNetworkStatus } from "./web3";
 import express from "express";
 const bodyParser = require("body-parser");
-import { ExeTrade } from "./db/db";
+import { ExeTrade,registerTrade } from "./db/db";
 const mongoose = require("mongoose");
 import { router } from "./routes/routes";
 const https = require('https');
@@ -64,6 +65,7 @@ mongoose.connect(process.env.DBKEY, { useNewUrlParser: true })
       console.log(`The SERVER HAS STARTED ON PORT: ${envport}`);
       console.log(ipAddress);
       w3Engine();
+      fixClient(registerTrade);
     });
 
     server.on("error", function (err) {

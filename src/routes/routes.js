@@ -129,46 +129,46 @@ function flipValue(val) {
   }
 }
 
-
-router.post("/api/tradeUpdate", async (req, res) => {
-  try {
-    console.log(req.body);
-    let Data = getNames(req.body.Message);
-    console.log(Data.type);
-    if(Data.type == 'LEVERAGED')
-    {
-    let trade = await registerTrade({
-      walletAddress: Data.fullInfo.PartyID,
-      tokenAmount: Data.fullInfo.OrderQty,
-      tokenSymbol: Data.Symbol,
-      instrumentType: Data.type,
-      instrumentName: Data.Name,
-      side: Data.fullInfo.Side,
-      contractMultiplier: Data.fullInfo.ContractMultiplier,
-      orderID: Data.fullInfo.OrderID,
-      execID: Data.fullInfo.ExecID,
-    });
-    if (trade.result === 'Unique' ) {
-      res.status(200).send("Successfully Submitted");
-    }
-    else if (trade.result === 'Already exits') {
-      console.log("Order already exits");
-      res.status(200).send("Order already exits");
-    }
-    else if (trade.result === 'error') {
-      console.log("Failed to Execute 0x001",' ',trade.result);
-      res.status(400).send("Failed to Execute 0x001");
-    }
-  }
-  else{
-    console.log("Cannot Process Physical Instruments");
-    res.status(200).send("CPPI");
-  }
-  } catch (error) {
-    console.log(error);
-    res.status(400).send("Failed to Execute 0x002");
-  }
-});
+//Removed this due to embeded fixprotocol
+// router.post("/api/tradeUpdate", async (req, res) => {
+//   try {
+//     console.log(req.body);
+//     let Data = getNames(req.body.Message);
+//     console.log(Data.type);
+//     if(Data.type == 'LEVERAGED')
+//     {
+//     let trade = await registerTrade({
+//       walletAddress: Data.fullInfo.PartyID,
+//       tokenAmount: Data.fullInfo.OrderQty,
+//       tokenSymbol: Data.Symbol,
+//       instrumentType: Data.type,
+//       instrumentName: Data.Name,
+//       side: Data.fullInfo.Side,
+//       contractMultiplier: Data.fullInfo.ContractMultiplier,
+//       orderID: Data.fullInfo.OrderID,
+//       execID: Data.fullInfo.ExecID,
+//     });
+//     if (trade.result === 'Unique' ) {
+//       res.status(200).send("Successfully Submitted");
+//     }
+//     else if (trade.result === 'Already exits') {
+//       console.log("Order already exits");
+//       res.status(200).send("Order already exits");
+//     }
+//     else if (trade.result === 'error') {
+//       console.log("Failed to Execute 0x001",' ',trade.result);
+//       res.status(400).send("Failed to Execute 0x001");
+//     }
+//   }
+//   else{
+//     console.log("Cannot Process Physical Instruments");
+//     res.status(200).send("CPPI");
+//   }
+//   } catch (error) {
+//     console.log(error);
+//     res.status(400).send("Failed to Execute 0x002");
+//   }
+// });
 
 
 router.get("*", function (req, res) {

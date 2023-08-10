@@ -57,9 +57,13 @@ export async function UpdateUserWallet(userData) {
 
 
 export async function registerTrade(info) {
+
+  console.log(info);
   try {
     let count = await TradeModel.countDocuments({ orderID: info.orderID });
     let execCount = await TradeModel.countDocuments({ execID: info.execID });
+    console.log(count,execCount);
+
     if (count == 0 && execCount == 0) {
       const newTrade = new TradeModel({
         walletAddress: info.walletAddress,
@@ -67,11 +71,11 @@ export async function registerTrade(info) {
         tokenSymbol: info.tokenSymbol,
         instrumentType: info.instrumentType,
         side: info.side,
-        contractMultiplier: info.contractMultiplier,
+        contractMultiplier: info.ContractMultiplier,
         instrumentName: info.instrumentName,
         transactionHash: "0x00",
         orderID: info.orderID,
-        execID: info.execID,
+        execID: info.ExecID,
       });
       let x = await newTrade.save();
       return { result: 'Unique', value: x };
