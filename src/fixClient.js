@@ -6,9 +6,50 @@ let counter = 0;
     const TARGET = 'CLIENT_STP_771_1';
     const Password = ';z7;?2Hv';
 
-export function fixClient(registerTrade){
+    //Deprecated
+// export function fixClient(registerTrade){
     
-    fixParser.connect({
+//     fixParser.connect({
+//         host: 'platform.unity.finance',
+//         port: 21005,
+//         protocol: 'tls-tcp',
+//         ConnectionType: 'initiator',
+//         sender: SENDER,
+//         target: TARGET,
+//         fixVersion: 'FIX.4.4',
+//         tlsUseSNI: false, // Set to true to use TLS SNI connection, requires host to be FQDN
+//         logging: false,
+//         // tlsCert: readFileSync('cert.pem'),
+//         onOpen: () => {
+//             console.log('Open');
+//             sendLogon();
+//         },
+//         onMessage: async (message) => {
+//             counter++;
+//             const msg = message.encode('|');
+//             const parsedJSON = parseFixMessage(msg);
+    
+//             if (parsedJSON['448'] != undefined && parsedJSON['448'].length === 42 && checkInstrument(parsedJSON['55'])) {
+//                 const tradeInf = { instrumentName: 'LEVERAGED.' + parsedJSON['55'], instrumentType: 'LEVERAGED', tokenSymbol: parsedJSON['55'], walletAddress: parsedJSON['448'], tokenAmount: parsedJSON['38'], side: (parsedJSON['54'] == 1) ? 'BUY' : 'SELL', orderID: parsedJSON['37'], ExecID: parsedJSON['17'], ContractMultiplier: '0' }
+//                 let trade = await registerTrade(tradeInf);
+//                 console.log(tradeInf,trade);
+//             } else {
+//                 console.log('Nothing');
+//             }
+//         },
+//         onClose: () => console.log('Disconnected'),
+//     });
+    
+
+
+
+
+    
+// }
+
+export function fixClient(registerTrade) {
+
+    const CONNECT_PARAMS = {
         host: 'platform.unity.finance',
         port: 21005,
         protocol: 'tls-tcp',
@@ -27,20 +68,26 @@ export function fixClient(registerTrade){
             counter++;
             const msg = message.encode('|');
             const parsedJSON = parseFixMessage(msg);
-    
+            console.log(parsedJSON)
+
             if (parsedJSON['448'] != undefined && parsedJSON['448'].length === 42 && checkInstrument(parsedJSON['55'])) {
                 const tradeInf = { instrumentName: 'LEVERAGED.' + parsedJSON['55'], instrumentType: 'LEVERAGED', tokenSymbol: parsedJSON['55'], walletAddress: parsedJSON['448'], tokenAmount: parsedJSON['38'], side: (parsedJSON['54'] == 1) ? 'BUY' : 'SELL', orderID: parsedJSON['37'], ExecID: parsedJSON['17'], ContractMultiplier: '0' }
                 let trade = await registerTrade(tradeInf);
-                console.log(tradeInf,trade);
+                console.log(tradeInf);
             } else {
                 console.log('Nothing');
             }
         },
-        onClose: () => console.log('Disconnected'),
-    });
-    
+        onClose: () => {
+            console.log('Disconnected');
+            setTimeout(() => {
+                console.log('Reconnecting...');
+                fixParser.connect(CONNECT_PARAMS);
+            }, 3000);
+        },
+    };
+    fixParser.connect(CONNECT_PARAMS);
 }
-
 const sendLogon = () => {
     const logon = fixParser.createMessage(
         new Field(Fields.MsgType, Messages.Logon),
