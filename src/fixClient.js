@@ -83,7 +83,7 @@ export function fixClient(registerTrade) {
             setTimeout(() => {
                 console.log('Reconnecting...');
                 fixParser.connect(CONNECT_PARAMS);
-            }, 3000);
+            }, 1000);
         },
     };
     fixParser.connect(CONNECT_PARAMS);

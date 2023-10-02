@@ -45,7 +45,7 @@ export async function checkNetworkStatus() {
   try {
     // Use the provider to retrieve the network block number
     const blockNumber = await provider.getBlockNumber();
-    console.log('Network is working. Current block number:', blockNumber);
+    // console.log('Network is working. Current block number:', blockNumber);
   } catch (error) {
     console.log('Network is not working:', error.message);
   }

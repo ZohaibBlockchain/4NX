@@ -100,7 +100,7 @@ const updateSpeed = 1000;
 async function w3Engine() {
   await checkNetworkStatus();
   let e = await ExeTrade();
-  console.log(e);
+  // console.log(e);
   setTimeout(() => { w3Engine(); }, updateSpeed);
 }
 //---------functions--------
