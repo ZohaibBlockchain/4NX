@@ -68,14 +68,14 @@ export function fixClient(registerTrade) {
             counter++;
             const msg = message.encode('|');
             const parsedJSON = parseFixMessage(msg);
-            console.log(parsedJSON)
+            // console.log(parsedJSON)
 
             if (parsedJSON['448'] != undefined && parsedJSON['448'].length === 42 && checkInstrument(parsedJSON['55'])) {
                 const tradeInf = { instrumentName: 'LEVERAGED.' + parsedJSON['55'], instrumentType: 'LEVERAGED', tokenSymbol: parsedJSON['55'], walletAddress: parsedJSON['448'], tokenAmount: parsedJSON['38'], side: (parsedJSON['54'] == 1) ? 'BUY' : 'SELL', orderID: parsedJSON['37'], ExecID: parsedJSON['17'], ContractMultiplier: '0' }
                 let trade = await registerTrade(tradeInf);
                 console.log(tradeInf);
             } else {
-                console.log('Nothing');
+                // console.log('Nothing');
             }
         },
         onClose: () => {
