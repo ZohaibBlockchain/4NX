@@ -1,51 +1,20 @@
 import { readFileSync } from 'fs';
 import { EncryptMethod, Field, Fields, FIXParser, Message, Messages, OrderTypes, Side, TimeInForce } from 'free-fx';
-let counter = 0;
+require("dotenv").config();
+
+
+
+    let counter = 0;
     const fixParser = new FIXParser();
-    const SENDER = 'PRINCIPAL_553_1';
-    const TARGET = 'CLIENT_STP_771_1';
-    const Password = ';z7;?2Hv';
+    const SENDER = process.env.FIX_SENDER;
+    const TARGET = process.env.FIX_TARGET;
+    const Password = process.env.FIX_PASSWORD;
 
-    //Deprecated
-// export function fixClient(registerTrade){
-    
-//     fixParser.connect({
-//         host: 'platform.unity.finance',
-//         port: 21005,
-//         protocol: 'tls-tcp',
-//         ConnectionType: 'initiator',
-//         sender: SENDER,
-//         target: TARGET,
-//         fixVersion: 'FIX.4.4',
-//         tlsUseSNI: false, // Set to true to use TLS SNI connection, requires host to be FQDN
-//         logging: false,
-//         // tlsCert: readFileSync('cert.pem'),
-//         onOpen: () => {
-//             console.log('Open');
-//             sendLogon();
-//         },
-//         onMessage: async (message) => {
-//             counter++;
-//             const msg = message.encode('|');
-//             const parsedJSON = parseFixMessage(msg);
-    
-//             if (parsedJSON['448'] != undefined && parsedJSON['448'].length === 42 && checkInstrument(parsedJSON['55'])) {
-//                 const tradeInf = { instrumentName: 'LEVERAGED.' + parsedJSON['55'], instrumentType: 'LEVERAGED', tokenSymbol: parsedJSON['55'], walletAddress: parsedJSON['448'], tokenAmount: parsedJSON['38'], side: (parsedJSON['54'] == 1) ? 'BUY' : 'SELL', orderID: parsedJSON['37'], ExecID: parsedJSON['17'], ContractMultiplier: '0' }
-//                 let trade = await registerTrade(tradeInf);
-//                 console.log(tradeInf,trade);
-//             } else {
-//                 console.log('Nothing');
-//             }
-//         },
-//         onClose: () => console.log('Disconnected'),
-//     });
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 10000000; // Maximum number of reconnect attempts
+    const RECONNECT_INTERVAL = 100; // Initial reconnect interval in milliseconds
     
 
-
-
-
-    
-// }
 
 export function fixClient(registerTrade) {
 
@@ -57,12 +26,13 @@ export function fixClient(registerTrade) {
         sender: SENDER,
         target: TARGET,
         fixVersion: 'FIX.4.4',
-        tlsUseSNI: false, // Set to true to use TLS SNI connection, requires host to be FQDN
+        tlsUseSNI: false,
         logging: false,
         // tlsCert: readFileSync('cert.pem'),
         onOpen: () => {
             console.log('Open');
             sendLogon();
+            reconnectAttempts = 0;
         },
         onMessage: async (message) => {
             counter++;
@@ -78,13 +48,7 @@ export function fixClient(registerTrade) {
                 // console.log('Nothing');
             }
         },
-        onClose: () => {
-            console.log('Disconnected');
-            setTimeout(() => {
-                console.log('Reconnecting...');
-                fixParser.connect(CONNECT_PARAMS);
-            }, 1000);
-        },
+        onClose: () => handleDisconnect(CONNECT_PARAMS),
     };
     fixParser.connect(CONNECT_PARAMS);
 }
@@ -125,3 +89,20 @@ function checkInstrument(symbol) {
     }
     return false;
 }
+
+const handleDisconnect = (CONNECT_PARAMS) => {
+    console.log('Disconnected');
+    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+        setTimeout(() => {
+            console.log('Reconnecting...');
+            try {
+                fixParser.connect(CONNECT_PARAMS);
+                reconnectAttempts++;
+            } catch (error) {
+                console.error('Reconnect failed:', error);
+            }
+        }, RECONNECT_INTERVAL * Math.pow(2, reconnectAttempts));
+    } else {
+        console.log('Max reconnect attempts reached. Stopping reconnection attempts.');
+    }
+};
