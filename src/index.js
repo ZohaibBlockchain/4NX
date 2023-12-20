@@ -109,7 +109,7 @@ async function w3Engine() {
 
 
 async function msgHandler(msg, ws) {
-  // console.log(ws.id__);
+   console.log(msg);
   if (checkClient(ws)) {
     switch (msg.messageType) {
       case 'auth': {
@@ -122,7 +122,7 @@ async function msgHandler(msg, ws) {
       }
       case 'signOrder': {
         try {
-          // console.log('Warning Test ', msg.message);
+           console.log('Warning Test ', msg.message);
           let res = await SignTrade(msg.message);
 
           ws.send(JSON.stringify({ messageType: 'signOrder', message: res }));
