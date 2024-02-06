@@ -9,6 +9,10 @@ require('dotenv').config();
 
 
 
+
+
+
+
 export const DECIMAL = 6;
 const blockRange__ = 2000;
 const _chainID = 137;
@@ -147,7 +151,7 @@ export async function createOrValidate(address, symbol, name) {
     let gasPrice = await provider.getGasPrice(); // Get the current gas price
     let increasedGasPrice = gasPrice.mul(10); // Adjust the factor as per your requirement
 
-    let tx = await contract.deployNewERC20Token(name, symbol, DECIMAL, 'leveraged', true,{ gasPrice: increasedGasPrice });
+    let tx = await contract.deployNewERC20Token(name, symbol, DECIMAL, 'leveraged', true, { gasPrice: increasedGasPrice });
     let receipt = await tx.wait();
     return receipt.logs[0].address;
   }
@@ -235,8 +239,8 @@ export async function SignTrade(inf) {
     console.log(`r: ${r}`);
     console.log(`s: ${s}`);
     console.log(`v: ${v}`);
-    console.log({status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address,decimal: DECIMAL})
-    return { status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address, factoryAbi: smartContractInf.Factory.ABI, tokenAbi: smartContractInf.USDX.ABI, decimal: DECIMAL};
+    console.log({ status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address, decimal: DECIMAL })
+    return { status: 'Approved', r: r, s: s, v: v, orderId: _tradeId, price: _price, tradeAmount: _tradeAmount, blockRange: _blockRange, token: _token.address, side: inf.side, factoryAddress: smartContractInf.Factory.Address, factoryAbi: smartContractInf.Factory.ABI, tokenAbi: smartContractInf.USDX.ABI, decimal: DECIMAL };
   }
   catch (err) {
     console.log(err);

@@ -4,18 +4,6 @@ let garbage = ["BO", "FU", "_SPOT", "CFD", "FX", "CRYPTO", "CASH", "EQ", "INDEX"
 
 
 
-// export function getNames(dataArr) {
-//     let Data = parse(dataArr, '^').Body;
-//     if (checkInstrument(Data.Symbol)) {
-//         return { Name: 'LEVERAGED.' + Data.Symbol, Symbol: Data.Symbol, type: 'LEVERAGED', fullInfo: Data };
-//     } else {
-//         return { Name: 'DELIVERABLE' + Data.Symbol, Symbol: Data.Symbol, type: 'DELIVERABLE', fullInfo: Data };
-//     }
-// }
-
-
-
-
 function checkInstrument(symbol) {
     let _type = symbol.split(".")
     for (let i = 0; i < _type.length; i++) {

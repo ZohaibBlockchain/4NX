@@ -30,7 +30,7 @@ export function fixClient(registerTrade) {
         logging: false,
         // tlsCert: readFileSync('cert.pem'),
         onOpen: () => {
-            console.log('Open');
+            console.log('FIX protocol named: "TP" Opened');
             sendLogon();
             reconnectAttempts = 0;
         },
